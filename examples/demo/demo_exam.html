@@ -1,0 +1,3782 @@
+<!doctype html>
+<html lang="zh-CN" data-size="normal">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#faf9f5">
+  <title>MrLiHua · 李华同学</title>
+  <style>
+/* ============================================================
+   English Exam Reader — Claude-like editorial UI
+   Touch-first for a 4K Seewo board (Edge / Chromium).
+   ============================================================ */
+
+:root {
+  --pane-head-h: calc(clamp(34px, 2.1vw, 44px) + 0.34rem + 1px);
+  --paper: #faf9f5;
+  --paper-deep: #f5f0e8;
+  --surface: #fffdf9;
+  --surface-2: #fbf7ef;
+  --ink: #141413;
+  --ink-2: #3d3d3a;
+  --muted: #6c6a64;
+  --faint: #8e8b82;
+  --line: #e6dfd8;
+  --line-strong: #d4c9bc;
+  --coral: #cc785c;
+  --coral-deep: #a9583e;
+  --coral-soft: #f5e6df;
+  --gold: #d9a441;
+  --gold-deep: #8e6a1d;
+  --yellow: #f3e6b8;
+  --green: #dcebdc;
+  --green-deep: #3f6b4a;
+  --red: #f4d8d1;
+  --red-deep: #9d4a3c;
+  --blue: #dce8f0;
+  --blue-deep: #3f6075;
+  --violet-deep: #65517f;
+  --radius: 14px;
+  --base-fs: clamp(20px, 0.8vw, 32px);
+  --tap: clamp(56px, 2.8vw, 92px);
+  --tap-sm: clamp(56px, 2.4vw, 84px);
+  --split: 56%;
+  --ui: "Inter", "Segoe UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Songti SC", "SimSun", serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --shadow: 0 18px 48px rgba(20, 20, 19, 0.1);
+}
+
+html[data-size="large"] { font-size: calc(var(--base-fs) * 1.1); }
+html[data-size="xlarge"] { font-size: calc(var(--base-fs) * 1.22); }
+
+* { box-sizing: border-box; }
+
+html {
+  height: 100%;
+  font-size: var(--base-fs);
+  scroll-behavior: smooth;
+}
+
+body.drawer-open { overflow: hidden; }
+
+body {
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+[hidden] { display: none !important; }
+
+::selection { background: var(--yellow); color: var(--ink); }
+
+/* ---------- scrollbars ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+  border: 2px solid var(--surface);
+}
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ============================================================
+   Top bar
+   ============================================================ */
+.topbar {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 0;
+  padding: 0.55rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: clamp(20px, 1.5vw, 32px);
+  border-bottom: 1px solid var(--line);
+  overflow: visible;
+  background: rgba(250, 249, 245, 0.98);
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: max-content;
+}
+
+.brand-mark {
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+}
+.topbar > * { align-self: center; }
+.topbar-left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 1.5vw, 32px);
+  min-width: 0;
+}
+.brand-kicker {
+  font-size: 0.54rem;
+  letter-spacing: 0.16em;
+  color: var(--faint);
+  font-weight: 650;
+}
+.brand-title {
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.section-picker {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+.select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 0.95rem;
+  top: 50%;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-right: 2px solid var(--coral-deep);
+  border-bottom: 2px solid var(--coral-deep);
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
+}
+.section-select {
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 56px;
+  min-width: clamp(200px, 12vw, 300px);
+  padding: 0 2.5rem 0 0.95rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 0.9rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.section-select:hover { border-color: var(--coral); }
+.section-select:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 2px;
+}
+
+.top-tools {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.top-tool {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  min-height: var(--tap-sm);
+  padding: 0 0.62rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.top-tool:hover { border-color: var(--coral); }
+.top-tool[aria-expanded="true"] {
+  border-color: var(--coral);
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+}
+.wl-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.55rem;
+  height: 1.55rem;
+  padding: 0 0.25rem;
+  border-radius: 4px;
+  background: var(--paper-deep);
+  color: var(--coral-deep);
+  font-size: 0.62rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.top-panel {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 0.25rem);
+  left: 1.1rem;
+  right: 1.1rem;
+  max-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 0 22px 56px rgba(20, 20, 19, 0.16);
+}
+.wordlist-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 0.8rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.wordlist-title {
+  margin: 0.18rem 0 0;
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.wl-total {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 4px;
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+  font-family: var(--ui);
+  font-size: 0.64rem;
+  font-weight: 700;
+  vertical-align: 0.25em;
+}
+.wordlist-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 0.55rem;
+}
+.wordlist-panel .vocab-list {
+  max-height: none;
+  padding: 0;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
+.wordlist-foot {
+  flex: 0 0 auto;
+  padding: 0.45rem 1.1rem 0.55rem;
+  border-top: 1px solid var(--line);
+  color: var(--faint);
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+.top-panel-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 0.75rem 1.1rem 1rem;
+}
+.structure-type {
+  margin-bottom: 0.4rem;
+  color: var(--coral-deep);
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+.structure-overview {
+  margin-bottom: 0.8rem;
+  padding: 0.7rem 0.8rem;
+  border-left: 3px solid var(--coral);
+  border-radius: 0 8px 8px 0;
+  background: var(--coral-soft);
+  color: var(--ink-2);
+  font-size: 0.86rem;
+  line-height: 1.65;
+}
+.structure-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.structure-part {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.sp-label {
+  color: var(--coral-deep);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+.sp-function {
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+.sp-main {
+  grid-column: 2;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+.structure-note {
+  margin-top: 0.65rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: var(--paper-deep);
+  color: var(--ink-2);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.structure-note b { color: var(--coral-deep); margin-right: 0.35rem; }
+.exam-list {
+  display: grid;
+  gap: 0.55rem;
+}
+.exam-card {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+}
+.exam-kicker {
+  color: var(--coral-deep);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  font-weight: 750;
+}
+.exam-title {
+  margin: 0.18rem 0 0.35rem;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  line-height: 1.25;
+}
+.exam-analysis {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+.exam-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+.exam-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0.05rem 0.42rem;
+  border-radius: 4px;
+  background: var(--paper-deep);
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+.exam-pill.is-q { background: var(--coral-soft); color: var(--coral-deep); }
+
+.section-context {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.08rem;
+  padding-left: 0;
+  border-left: 0;
+  white-space: normal;
+  overflow: visible;
+  text-align: left;
+}
+.context-title {
+  flex: 0 0 auto;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  line-height: 1.18;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.context-meta {
+  min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+  color: var(--faint);
+  font-size: 0.7rem;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.topbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+.meta-item {
+  max-width: 26ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.meta-sep { width: 1px; height: 1.1rem; background: var(--line); }
+
+.answer-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  color: var(--green-deep);
+  background: var(--green);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.answer-badge.is-inferred {
+  color: var(--coral-deep);
+  background: var(--coral-soft);
+  border-color: #e9c8ba;
+}
+
+.topbar-actions {
+  margin-left: 0;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+.seg {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper-deep);
+}
+.seg-btn {
+  min-height: 46px;
+  padding: 0 0.72rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.seg-btn[aria-pressed="true"] {
+  background: var(--coral);
+  color: #fffaf6;
+}
+.seg-btn:hover { background: var(--paper-deep); color: var(--ink); }
+.seg-btn[aria-pressed="true"]:hover { background: var(--coral-deep); color: #fffaf6; }
+
+.icon-btn {
+  min-height: 46px;
+  padding: 0 0.55rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.icon-btn:hover { background: var(--paper-deep); color: var(--ink); }
+.icon-btn.is-on { background: var(--coral-soft); color: var(--coral-deep); }
+
+/* ============================================================
+   Section navigation + legend
+   ============================================================ */
+.section-nav {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.6rem 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.section-nav::-webkit-scrollbar { display: none; }
+
+.section-tab {
+  flex: 0 0 auto;
+  min-height: var(--tap);
+  padding: 0 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 550;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.section-tab::before {
+  content: "";
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+.section-tab:hover {
+  background: var(--paper-deep);
+  color: var(--ink);
+}
+.section-tab[aria-current="true"] {
+  background: var(--coral-soft);
+  border-color: #ebcbbf;
+  color: var(--coral-deep);
+}
+.section-tab[aria-current="true"]::before { background: var(--coral); }
+.section-tab .tab-count {
+  font-size: 0.68rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.section-tab[aria-current="true"] .tab-count { color: var(--coral-deep); }
+
+.legend-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.14rem 1.1rem 0.08rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.topbar-legend {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.legend {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  align-items: center;
+  gap: 8px 16px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  min-height: 24px;
+  padding: 0;
+  white-space: nowrap;
+}
+.swatch {
+  display: inline-block;
+  width: 1.25rem;
+  height: 0.7rem;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+}
+.swatch-ev { background: var(--yellow); border-color: #e6d08a; }
+.swatch-key {
+  width: auto;
+  min-width: 1.9rem;
+  padding: 0 0.2rem;
+  background: transparent;
+  border-color: var(--coral);
+  color: var(--coral);
+  font-family: var(--serif);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+.swatch-syn { background: var(--green); border-color: #b8d4b9; }
+.swatch-ant { background: var(--red); border-color: #e3b2a8; }
+.swatch-gap { background: var(--coral-soft); border-color: var(--coral); }
+.swatch-vocab { background: var(--surface); border-bottom: 2px dotted var(--faint); height: 0.55rem; }
+.swatch-cx {
+  width: auto;
+  height: auto;
+  min-width: 1.25rem;
+  padding: 0 0.2rem;
+  border: 1px solid #d4a93f;
+  border-radius: 0;
+  background: #fff1a8;
+  color: #5f4600;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 750;
+  text-align: center;
+  line-height: 1.3;
+}
+.legend-help {
+  position: relative;
+  flex: 0 0 auto;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #999;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.legend-help:hover { color: #555; }
+.legend-help:active { color: var(--coral-deep); }
+.legend-help::after {
+  content: attr(data-tip);
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 40;
+  width: min(20rem, 78vw);
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.66rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.legend-help:hover::after,
+.legend-help:focus-visible::after,
+.legend-help.is-open::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Main / section shell
+   ============================================================ */
+main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.exam-section {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1.6rem 1.25rem;
+}
+
+.section-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.1rem 0.15rem 0.9rem;
+}
+.section-kicker {
+  font-size: 0.66rem;
+  letter-spacing: 0.15em;
+  color: var(--coral-deep);
+  font-weight: 700;
+}
+.section-title {
+  margin: 0.16rem 0 0.3rem;
+  font-family: var(--serif);
+  font-size: 1.85rem;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.section-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.65rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+.section-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.section-meta span + span::before {
+  content: "·";
+  color: var(--line-strong);
+  margin-right: 0.05rem;
+}
+.section-side {
+  max-width: 30ch;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  text-align: right;
+  padding-bottom: 0.15rem;
+}
+.section-side strong { color: var(--ink-2); font-weight: 650; }
+
+.workspace {
+  --splitter-w: clamp(36px, 2.4vw, 56px);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.passage-pane {
+  flex: 0 0 calc(var(--split) - var(--splitter-w) / 2);
+  min-width: 0;
+}
+.analysis-pane {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pane.analysis-pane { overflow: hidden; }
+
+.pane {
+  position: relative;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.pane-head {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  min-height: 0;
+  padding: 0.16rem 0 0.18rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+.passage-pane .pane-head { padding-right: 0.35rem; }
+.analysis-pane .pane-head { padding-left: 0.35rem; }
+
+/* drag control between passage and analysis */
+.splitter {
+  flex: 0 0 var(--splitter-w);
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+}
+.splitter::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: var(--line);
+  transition: background 120ms ease, width 120ms ease;
+}
+.splitter::after {
+  content: "";
+  position: relative;
+  z-index: 1;
+  width: 0.42rem;
+  height: 3.2rem;
+  border-radius: 999px;
+  background: var(--line-strong);
+  box-shadow: 0 0 0 0.22rem var(--paper);
+  transition: background 120ms ease, height 120ms ease;
+}
+.splitter:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: -3px;
+}
+.splitter:hover::before,
+.splitter:focus-visible::before,
+body.is-splitting .splitter::before {
+  width: 2px;
+  background: var(--coral);
+}
+.splitter:hover::after,
+.splitter:focus-visible::after,
+body.is-splitting .splitter::after {
+  background: var(--coral);
+  height: 4.4rem;
+}
+body.is-splitting {
+  cursor: col-resize;
+  user-select: none;
+}
+body.is-splitting * { cursor: col-resize !important; }
+
+/* collapsed side rails */
+.collapsed-rail {
+  display: none;
+  flex: 0 0 clamp(44px, 2.7vw, 64px);
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: var(--paper-deep);
+  color: var(--coral-deep);
+  font-family: var(--ui);
+  font-size: 0.76rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  cursor: pointer;
+}
+.rail-left {
+  border-left: 0;
+  border-right: 1px solid var(--line);
+}
+.collapsed-rail:focus { outline: none; }
+.collapsed-rail:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--coral);
+}
+.collapsed-rail:hover {
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+}
+.workspace.is-collapsed-passage .passage-pane,
+.workspace.is-collapsed-passage .splitter,
+.workspace.is-collapsed-analysis .analysis-pane,
+.workspace.is-collapsed-analysis .splitter {
+  display: none;
+}
+.workspace.is-collapsed-passage .rail-left,
+.workspace.is-collapsed-analysis .rail-right {
+  display: flex;
+}
+.workspace.is-collapsed-passage .analysis-pane,
+.workspace.is-collapsed-analysis .passage-pane {
+  flex: 1 1 auto;
+}
+.workspace.is-collapsed-analysis .passage-body { max-width: 86ch; }
+.workspace.is-collapsed-passage .analysis-body { max-width: min(78rem, 94%); }
+.pane-label {
+  color: var(--faint);
+  font-size: 0.63rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+}
+.pane-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.34rem;
+}
+.lang-toggle {
+  min-height: clamp(34px, 2.1vw, 44px);
+  padding: 0 0.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 0.64rem;
+  line-height: 1;
+  font-weight: 650;
+  cursor: pointer;
+}
+.lang-toggle[aria-pressed="true"] {
+  background: var(--coral-soft);
+  border-color: #e9c8ba;
+  color: var(--coral-deep);
+}
+.pane-note { color: var(--muted); font-size: 0.64rem; }
+
+/* ============================================================
+   Passage
+   ============================================================ */
+.passage-body {
+  max-width: 72ch;
+  margin: 0 auto;
+  padding: clamp(1.2rem, 2.2vw, 2.8rem) clamp(1.2rem, 2.4vw, 3.2rem);
+}
+
+.passage-body p {
+  margin: 0 0 0.95em;
+  font-family: var(--serif);
+  font-size: 1.07rem;
+  line-height: 1.86;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.passage-body p:last-child { margin-bottom: 0; }
+.zh {
+  margin: -0.45em 0 1.15em;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--coral-soft);
+  color: var(--muted);
+  font-family: var(--ui);
+  font-size: 0.78em;
+  line-height: 1.7;
+}
+.passage-body:not(.is-bilingual) .zh { display: none; }
+
+.passage-figure {
+  margin: 1.2rem 0 1.4rem;
+  padding: 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+.passage-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+.passage-figure figcaption {
+  margin-top: 0.35rem;
+  color: var(--faint);
+  font-size: 0.68rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.passage-body .heading {
+  margin: 1.55em 0 0.42em;
+  font-family: var(--serif);
+  font-size: 1.03rem;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+.passage-body .heading::after {
+  content: "";
+  display: block;
+  width: 2.2rem;
+  height: 2px;
+  margin-top: 0.35em;
+  background: var(--coral);
+  opacity: 0.65;
+  border-radius: 999px;
+}
+
+.passage-body .bullet-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: 1.55em 0 0.4em;
+  font-family: var(--serif);
+  font-size: 1.03rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.passage-body .bullet-heading::before {
+  content: "•";
+  color: var(--coral);
+  font-family: var(--ui);
+  font-size: 1.05em;
+  line-height: 1;
+}
+.passage-body .bullet-gap {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 1.4em 0 0.4em;
+}
+.passage-body .bullet-gap::before {
+  content: "•";
+  color: var(--coral);
+  font-family: var(--ui);
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+/* evidence highlight */
+.ev {
+  background: transparent;
+  border-radius: 3px;
+  padding: 0 0.06em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  transition: background-color 140ms ease, box-shadow 140ms ease;
+}
+.ev.is-on {
+  background-color: transparent;
+  background-image: linear-gradient(rgba(243, 230, 184, 0.66), rgba(243, 230, 184, 0.66));
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  box-shadow: inset 0 -2px 0 rgba(217, 164, 65, 0.55);
+}
+.ev.is-refute.is-on {
+  background-image: linear-gradient(rgba(244, 216, 209, 0.7), rgba(244, 216, 209, 0.7));
+  box-shadow: inset 0 -2px 0 rgba(157, 74, 60, 0.45);
+}
+.ev.is-fallback.is-on {
+  background-image: linear-gradient(rgba(243, 230, 184, 0.34), rgba(243, 230, 184, 0.34));
+  box-shadow: inset 0 -2px 0 rgba(217, 164, 65, 0.28);
+}
+/* Before the passage scroll settles, the highlight is fully invisible. */
+.ev.is-on.ev-awaiting {
+  background-image: none;
+  background-color: transparent;
+  box-shadow: none;
+}
+/* Left-to-right wipe on the inline box; no absolute overlay, so wrapped
+   text keeps its own per-line background fragments. */
+.ev.is-on.ev-wipe {
+  animation: ev-wipe 500ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  will-change: background-size;
+}
+@keyframes ev-wipe {
+  from { background-size: 0% 100%; }
+  to { background-size: 100% 100%; }
+}
+
+/* keywords: coral square brackets, like an editorial mark */
+.lex {
+  text-decoration: none;
+  color: inherit;
+}
+.lex.lex-start::before {
+  content: "[";
+  color: var(--coral);
+  font-weight: 700;
+  margin-right: 0.04em;
+}
+.lex.lex-end::after {
+  content: "]";
+  color: var(--coral);
+  font-weight: 700;
+  margin-left: 0.04em;
+}
+.lex-syn,
+.lex-paraphrase,
+.lex-ant,
+.lex-logic,
+.lex-collocation,
+.lex-inference {
+  text-decoration: none;
+}
+
+/* vocabulary */
+.vocab {
+  border-bottom: 1px dotted var(--faint);
+  border-radius: 3px;
+  padding: 0 0.06em;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.vocab:hover,
+.vocab:focus-visible {
+  background: var(--paper-deep);
+  border-bottom-color: var(--coral);
+  outline: none;
+}
+
+/* long sentence: Office-style rectangular text highlight */
+.cx {
+  background: #fff1a8;
+  border-radius: 0;
+  padding: 0 0.04em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  text-decoration: none;
+  cursor: pointer;
+}
+.cx:hover { background: #ffe775; }
+.cx-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: clamp(40px, 1.8vw, 56px);
+  min-height: clamp(40px, 1.8vw, 56px);
+  margin-left: 0.22em;
+  padding: 0 0.28em;
+  border: 1px solid #d4a93f;
+  border-radius: 0;
+  background: #ffe27a;
+  color: #5f4600;
+  font-family: var(--ui);
+  font-size: 0.62rem;
+  font-weight: 750;
+  line-height: 1;
+  vertical-align: 0.18em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.cx-mark:hover { background: #ffd75e; }
+
+/* gap */
+.gap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.4em;
+  min-height: 2.4em;
+  margin: 0 0.1em;
+  padding: 0 0.35em;
+  border: 1px dashed var(--coral);
+  border-radius: 7px;
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+  font-family: var(--ui);
+  font-size: 0.78em;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: 0.08em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.gap::before {
+  content: "";
+  position: absolute;
+  inset: -10px -6px;
+  border-radius: 9px;
+}
+.exam-section[data-kind="seven"] .passage-body .gap {
+  min-width: 3.2em;
+}
+.gap:hover { background: #f0d8cd; }
+.gap.is-active {
+  background: var(--coral);
+  border-color: var(--coral-deep);
+  color: var(--paper);
+}
+.bullet-gap .gap {
+  min-width: 4.2em;
+  min-height: 2.2em;
+  font-size: 0.9em;
+}
+
+.blank {
+  display: inline-block;
+  min-width: 3.1em;
+  padding: 0 0.2em;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+/* ============================================================
+   Analysis pane
+   ============================================================ */
+.analysis-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 0;
+  padding: 0 0.9rem;
+  border-bottom: 0;
+  background: var(--paper);
+}
+.tab-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: var(--pane-head-h);
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px 16px 8px;
+  line-height: 1.2;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #666;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+}
+.tab-btn:hover:not(.is-active) {
+  color: var(--ink);
+  background: rgba(0, 0, 0, 0.035);
+}
+.tab-btn:active:not(.is-active) {
+  background: var(--paper-deep);
+}
+.tab-btn.is-active,
+.tab-btn[aria-selected="true"] {
+  background: transparent;
+  border-bottom-color: var(--coral);
+  color: var(--coral-deep);
+  font-weight: 750;
+}
+.tab-btn.is-active:active {
+  background: var(--paper-deep);
+}
+.tab-panel[hidden] { display: none !important; }
+.tab-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+.tab-title {
+  margin: 0.1rem 0 0;
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.tab-sub {
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+.tab-count {
+  color: var(--muted);
+  font-family: var(--ui);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+.tab-section-title {
+  margin: 0.85rem 0 0.45rem;
+  color: var(--coral-deep);
+  font-size: 0.64rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tab-hint {
+  margin: 0.55rem 0 0.7rem;
+  color: var(--faint);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+.tab-hint.is-strong {
+  padding: 0.45rem 0.6rem;
+  border-left: 2px solid var(--coral);
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+}
+.tab-empty {
+  padding: 1.2rem 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.tab-vocab-list { padding: 0; }
+.structure-flow {
+  position: relative;
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 1rem;
+}
+.structure-flow::before {
+  content: "";
+  position: absolute;
+  left: 0.32rem;
+  top: 0.8rem;
+  bottom: 0.9rem;
+  width: 1px;
+  background: #e6c8bb;
+}
+.structure-flow-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.1rem 1fr;
+  gap: 0.1rem 0.55rem;
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-2);
+  text-align: left;
+  cursor: pointer;
+}
+.structure-flow-node::before {
+  content: "";
+  position: absolute;
+  left: -0.75rem;
+  top: 0.9rem;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--coral);
+}
+.structure-flow-node:hover { border-color: var(--coral); background: #fffaf6; }
+.node-index {
+  grid-row: 1 / span 2;
+  color: var(--coral-deep);
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  line-height: 1.1;
+}
+.node-label {
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.node-main {
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.node-jump {
+  grid-column: 2;
+  margin-top: 0.1rem;
+  color: var(--coral-deep);
+  font-size: 0.6rem;
+}
+.idea-chain {
+  display: grid;
+  gap: 0.42rem;
+}
+.idea-step {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-2);
+  text-align: left;
+  cursor: pointer;
+}
+.idea-step:hover { border-color: var(--coral); background: #fffaf6; }
+.idea-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+  font-size: 0.66rem;
+  font-weight: 750;
+}
+.idea-body { display: grid; gap: 0.1rem; }
+.idea-label {
+  color: var(--coral-deep);
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+.idea-text {
+  color: var(--ink-2);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+.main-statement {
+  margin: 0.3rem 0 0.8rem;
+  padding: 0.8rem 0.9rem;
+  border-left: 3px solid var(--coral);
+  border-radius: 0 8px 8px 0;
+  background: var(--coral-soft);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.45rem;
+}
+.main-cell {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.main-cell .k {
+  color: var(--coral-deep);
+  font-size: 0.6rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+}
+.main-cell .v {
+  color: var(--ink-2);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.exam-card.is-link {
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--ui);
+}
+.exam-card.is-link:hover { border-color: var(--coral); background: #fffaf6; }
+.exam-card.is-link .exam-title { display: block; }
+.exam-card.is-link .exam-analysis { display: block; }
+.exam-card.is-link .exam-meta { display: flex; }
+.passage-body [data-block].is-target {
+  background: #fbe6da;
+  box-shadow: inset 3px 0 0 var(--coral);
+  border-radius: 2px;
+  transition: background 160ms ease, box-shadow 160ms ease;
+}
+@media (min-width: 3000px) {
+  .tab-btn { padding-top: 14px; }
+}
+@media (max-width: 760px) {
+  .analysis-tabs { padding: 0.4rem 0.5rem; }
+  .tab-btn { font-size: 0.68rem; }
+  .main-grid { grid-template-columns: 1fr; }
+}
+.analysis-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0.85rem 0.9rem 0.9rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+.analysis-body > .tab-panel {
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+}
+.workspace.is-collapsed-passage .analysis-body { max-width: none; }
+.analysis-body > .tab-panel[data-tab-panel="vocab"] {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.analysis-body > .tab-panel[data-tab-panel="vocab"] > .tab-head { flex: 0 0 auto; }
+.vocab-list.tab-vocab-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: minmax(56px, 1fr);
+  gap: 0.4rem;
+  max-height: none;
+  overflow: auto;
+  padding: 0;
+}
+.vocab-list.tab-vocab-list .vocab-row { align-content: center; }
+
+/* word list panel in the analysis column */
+.vocab-panel {
+  margin: 0.1rem 0 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.vocab-panel > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: var(--tap-sm);
+  padding: 0.35rem 0.65rem;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.vocab-panel > summary::-webkit-details-marker { display: none; }
+.vocab-panel[open] > summary { border-bottom-color: var(--line); }
+.vocab-panel > summary::before {
+  content: "+";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55em;
+  height: 1.55em;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  color: var(--coral-deep);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.vocab-panel[open] > summary::before { content: "−"; }
+.vp-title {
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+.vp-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.55rem;
+  padding: 0.05rem 0.42rem;
+  border-radius: 4px;
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+.vp-hint {
+  margin-left: auto;
+  color: var(--faint);
+  font-size: 0.64rem;
+  white-space: nowrap;
+}
+.vocab-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0.4rem;
+  max-height: 28vh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0.5rem;
+}
+.vocab-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
+  align-items: center;
+  gap: 0.08rem 0.75rem;
+  min-height: 56px;
+  padding: 0.38rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink-2);
+  text-align: left;
+  cursor: pointer;
+}
+.vocab-row:hover {
+  border-color: var(--line-strong);
+  background: var(--surface);
+}
+.vw-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.32rem;
+  min-width: 0;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  flex-wrap: wrap;
+}
+.vw-word {
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  font-weight: 650;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.vw-ipa {
+  color: var(--muted);
+  font-size: 0.64rem;
+  white-space: nowrap;
+}
+.vw-pos {
+  color: var(--coral-deep);
+  font-size: 0.6rem;
+  font-weight: 750;
+}
+.vw-meaning {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  text-align: right;
+  color: var(--ink-2);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+.vw-q {
+  grid-row: 1;
+  grid-column: 3;
+  align-self: center;
+  padding: 0.12rem 0.32rem;
+  border-radius: 4px;
+  background: var(--paper-deep);
+  color: var(--muted);
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.vocab-row.is-beyond .vw-word { color: var(--violet-deep); }
+
+.q-index {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.38rem;
+  padding: 0.7rem 0 0.75rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+.q-index::-webkit-scrollbar { display: none; }
+.q-chip {
+  flex: 0 0 auto;
+  min-width: clamp(56px, 2.4vw, 72px);
+  min-height: clamp(56px, 2.4vw, 72px);
+  padding: 0 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.q-chip:hover { background: var(--paper-deep); color: var(--ink); }
+.q-chip[aria-current="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.q-card {
+  scroll-margin-top: 3.6rem;
+  margin-bottom: 0.8rem;
+  padding: 1rem 1.05rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+.q-card.is-active {
+  border-color: #d9b6a7;
+  box-shadow: 0 0 0 0.2rem var(--coral-soft);
+}
+.q-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.55rem;
+}
+.q-num {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.q-reveal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-sm);
+  padding: 0 0.65rem;
+  border: 1px solid #d9b6a7;
+  border-radius: 8px;
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.q-reveal:hover { background: #f0d8cd; }
+.q-reveal[aria-expanded="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.q-type {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.8rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: var(--paper-deep);
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.q-card:not(.is-revealed) .q-answer,
+.q-card:not(.is-revealed) .q-source,
+.q-card:not(.is-revealed) .q-answer-text,
+.q-card:not(.is-revealed) .evidence-box,
+.q-card:not(.is-revealed) .notes,
+.q-card:not(.is-revealed) .takeaway,
+.q-card:not(.is-revealed) .grammar-box,
+.q-card:not(.is-revealed) .q-feedback {
+  display: none !important;
+}
+.q-card:not(.is-revealed) .opt-state { visibility: hidden; }
+.q-card:not(.is-revealed) .option.is-correct .opt-key {
+  color: var(--ink-2);
+  background: var(--paper-deep);
+}
+
+.q-answer {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.1em;
+  min-height: 2.35em;
+  padding: 0 0.75em;
+  border-radius: 999px;
+  background: var(--coral);
+  color: #fffaf6;
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.q-answer.is-text {
+  min-width: 4.3em;
+  max-width: 12em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.q-source {
+  color: var(--faint);
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+.q-source.is-key { color: var(--green-deep); }
+
+.q-feedback {
+  margin: -0.15rem 0 0.7rem;
+  padding: 0.45rem 0.6rem;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 7px 7px 0;
+  background: rgba(243, 230, 184, 0.28);
+  color: var(--gold-deep);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.q-stem {
+  margin: 0.75rem 0 0.85rem;
+  font-family: var(--serif);
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.q-answer-text {
+  margin: -0.35rem 0 0.8rem;
+  color: var(--ink-2);
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+.q-answer-text b { color: var(--coral-deep); }
+
+.options { display: grid; gap: 0.5rem; }
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  width: 100%;
+  min-height: clamp(64px, 3.3vw, 108px);
+  padding: 0.64rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fffefa;
+  color: var(--ink-2);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+.option:hover { background: var(--surface-2); border-color: var(--line-strong); }
+.option.is-active {
+  border-color: var(--ink);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.opt-key {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25em;
+  height: 2.25em;
+  margin-top: 0.08em;
+  border-radius: 8px;
+  background: var(--paper-deep);
+  color: var(--ink-2);
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 1;
+}
+.option.is-active .opt-key { background: var(--ink); color: var(--paper); }
+.option.is-correct .opt-key { color: var(--green-deep); }
+.option.is-active.is-correct .opt-key { color: var(--paper); }
+.opt-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.93rem;
+  line-height: 1.5;
+  padding-top: 0.16em;
+  text-wrap: pretty;
+}
+.opt-state {
+  flex: 0 0 auto;
+  align-self: center;
+  margin-left: 0.25rem;
+  color: var(--faint);
+  font-size: 0.64rem;
+  white-space: nowrap;
+}
+.option.is-correct .opt-state { color: var(--green-deep); }
+.option.is-active .opt-state { color: var(--coral-deep); }
+
+/* evidence inside card */
+.evidence-box {
+  margin-top: 0.85rem;
+  padding: 0.8rem 0.9rem;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 10px 10px 0;
+  background: var(--surface-2);
+}
+.evidence-label {
+  color: var(--gold-deep);
+  font-size: 0.63rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+.evidence-quote {
+  margin: 0.4rem 0 0.35rem;
+  font-family: var(--serif);
+  font-size: 0.97rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.evidence-quote .ev-inline {
+  background: rgba(243, 230, 184, 0.62);
+  border-radius: 3px;
+  padding: 0 0.08em;
+}
+.evidence-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+.evidence-trans {
+  margin: 0.3rem 0 0.25rem;
+  padding-left: 0.55rem;
+  border-left: 2px solid var(--coral-soft);
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.link-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+.link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: clamp(56px, 2.4vw, 72px);
+  max-width: 100%;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 0.74rem;
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+}
+.link-chip:hover { background: var(--paper-deep); border-color: var(--line-strong); }
+.link-chip .rel {
+  flex: 0 0 auto;
+  padding: 0.08rem 0.35rem;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--green-deep);
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+.link-chip.is-ant .rel { background: var(--red); color: var(--red-deep); }
+.link-chip.is-logic .rel { background: var(--blue); color: var(--blue-deep); }
+.link-chip.is-collocation .rel { background: var(--yellow); color: var(--gold-deep); }
+.link-chip.is-inference .rel { background: #e8e0f0; color: var(--violet-deep); }
+.link-chip .arrow { color: var(--faint); }
+.link-chip.is-current {
+  border-color: var(--coral);
+  background: var(--coral-soft);
+  box-shadow: inset 0 0 0 1px #e5bdad;
+}
+
+/* option notes */
+.notes {
+  margin-top: 0.7rem;
+  padding-top: 0.2rem;
+  border-top: 1px solid var(--line);
+}
+.notes summary {
+  cursor: pointer;
+  min-height: 2.8rem;
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 650;
+}
+.note-row {
+  display: grid;
+  grid-template-columns: 2.1em 1fr;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(230, 223, 216, 0.65);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.note-row:last-child { border-bottom: 0; }
+.note-key {
+  color: var(--ink-2);
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.note-row.correct { color: var(--green-deep); }
+.note-row.correct .note-key { color: var(--green-deep); }
+
+.takeaway {
+  margin-top: 0.7rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: var(--coral-soft);
+  color: var(--coral-deep);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+.takeaway b {
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  margin-right: 0.35rem;
+}
+
+/* grammar blocks */
+.grammar-box {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+.grammar-row {
+  display: grid;
+  grid-template-columns: 4.4em 1fr;
+  gap: 0.55rem;
+  align-items: start;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+.grammar-row .label {
+  color: var(--faint);
+  font-size: 0.63rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  padding-top: 0.12em;
+}
+.grammar-row .value { color: var(--ink-2); }
+.grammar-trans {
+  padding: 0.6rem 0.7rem;
+  border-left: 3px solid var(--coral);
+  border-radius: 0 8px 8px 0;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+/* seven choice bank */
+.bank {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.bank-title {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+.bank-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  min-height: clamp(60px, 3vw, 96px);
+  padding: 0.55rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink-2);
+  text-align: left;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.bank-item:hover { border-color: var(--line-strong); }
+.bank-item.is-active {
+  border-color: var(--coral);
+  background: var(--coral-soft);
+  box-shadow: inset 0 0 0 1px #e5bdad;
+}
+.bank-key {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.95em;
+  height: 1.95em;
+  border-radius: 999px;
+  background: var(--paper-deep);
+  color: var(--ink);
+  font-weight: 750;
+  font-size: 0.76rem;
+}
+.bank-item.is-active .bank-key { background: var(--coral); color: var(--paper); }
+.bank-text { flex: 1 1 auto; }
+.bank-tag {
+  flex: 0 0 auto;
+  color: var(--coral-deep);
+  font-size: 0.62rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   Drawer
+   ============================================================ */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(20, 20, 19, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+}
+.drawer-backdrop.is-open { opacity: 1; pointer-events: auto; }
+
+.drawer {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(46vw, 900px);
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-left: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  transform: translateX(102%);
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 220ms;
+}
+.drawer.is-open {
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+}
+.drawer-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+.drawer-eyebrow {
+  color: var(--coral-deep);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  font-weight: 750;
+}
+.drawer-title {
+  margin: 0.2rem 0 0;
+  font-family: var(--serif);
+  font-size: 1.75rem;
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.drawer-close {
+  flex: 0 0 auto;
+  min-height: var(--tap);
+  padding: 0 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+.drawer-close:hover { background: var(--paper-deep); }
+.drawer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 1.1rem 1.25rem 2rem;
+}
+
+.vocab-word {
+  font-family: var(--serif);
+  font-size: 2.15rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.vocab-ipa {
+  margin-top: 0.3rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+.vocab-meaning {
+  margin-top: 0.65rem;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.vocab-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+.vocab-cell {
+  padding: 0.65rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+}
+.vocab-cell .k {
+  display: block;
+  color: var(--faint);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.vocab-cell .v { color: var(--ink-2); font-size: 0.84rem; line-height: 1.5; }
+.drawer-section-title {
+  margin: 1.15rem 0 0.4rem;
+  color: var(--faint);
+  font-size: 0.63rem;
+  letter-spacing: 0.13em;
+  font-weight: 750;
+}
+.drawer-quote {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0;
+  background: var(--surface-2);
+  font-family: var(--serif);
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.drawer-exam {
+  margin-top: 0.55rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.drawer-exam .exam-title { font-size: 0.9rem; }
+.drawer-exam .exam-analysis { margin-top: 0.3rem; font-size: 0.78rem; }
+.drawer-trans {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.complex-main {
+  margin-top: 0.4rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.layer-list {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+.layer-list li {
+  position: relative;
+  padding: 0.5rem 0.6rem 0.5rem 1.4rem;
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+.layer-list li::before {
+  content: "";
+  position: absolute;
+  left: 0.55rem;
+  top: 0.95rem;
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--coral);
+}
+.pill-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.8rem;
+  padding: 0.08rem 0.55rem;
+  border-radius: 999px;
+  background: var(--paper-deep);
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+/* ============================================================
+   Hover preview (mouse only; touch uses the drawer)
+   ============================================================ */
+.hovercard {
+  position: fixed;
+  z-index: 80;
+  width: min(30rem, 82vw);
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 14px 36px rgba(20, 20, 19, 0.14);
+  pointer-events: none;
+}
+.h-word {
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+.h-meta {
+  margin-top: 0.22rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+.h-meaning {
+  margin-top: 0.45rem;
+  color: var(--ink-2);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.h-eyebrow {
+  color: var(--coral-deep);
+  font-size: 0.6rem;
+  letter-spacing: 0.13em;
+  font-weight: 750;
+}
+.h-main {
+  margin-top: 0.35rem;
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.h-trans {
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+.h-hint {
+  margin-top: 0.55rem;
+  color: var(--faint);
+  font-size: 0.66rem;
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  z-index: 200;
+  transform: translateX(-50%) translateY(0.6rem);
+  max-width: min(90vw, 40rem);
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: var(--shadow);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.toast.is-show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (hover: hover) and (pointer: fine) {
+  .option:hover { border-color: var(--line-strong); }
+}
+
+@media (max-width: 1450px) {
+  .section-context { display: none; }
+}
+
+@media (max-width: 1150px) {
+  .topbar { flex-wrap: wrap; }
+  .section-context { display: none; }
+  .topbar-actions { order: 2; margin-left: auto; }
+  body {
+    height: auto;
+    min-height: 100dvh;
+    overflow: auto;
+  }
+  main { overflow: visible; }
+  .exam-section { min-height: auto; padding: 0.9rem 1rem 1.2rem; }
+  .workspace {
+    display: block;
+    min-height: 0;
+  }
+  .splitter,
+  .collapsed-rail {
+    display: none !important;
+  }
+  .workspace.is-collapsed-passage .passage-pane,
+  .workspace.is-collapsed-analysis .analysis-pane,
+  .workspace.is-collapsed-passage .analysis-pane {
+    display: block;
+  }
+  .passage-pane,
+  .analysis-pane {
+    flex: none;
+    width: 100%;
+  }
+  .analysis-pane { margin-top: 1rem; }
+  .pane {
+    overflow: visible;
+    height: auto;
+  }
+  .pane + .pane { margin-top: 1rem; }
+  .pane-head { position: static; }
+  .analysis-body { max-width: none; }
+  .section-side { display: none; }
+  .hint { display: none; }
+  .legend-bar { align-items: flex-start; }
+  .drawer {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: min(78dvh, 900px);
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 16px 16px 0 0;
+    transform: translateY(102%);
+  }
+  .drawer.is-open { transform: translateY(0); }
+}
+
+@media (max-width: 760px) {
+  :root { --base-fs: 18px; }
+  .topbar {
+    padding: 0.65rem 1rem;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  .brand-mark { width: 2.2rem; height: 2.2rem; font-size: 1.3rem; }
+  .brand-title { font-size: 1rem; }
+  .brand-kicker { font-size: 0.55rem; }
+  .topbar-actions { order: 3; width: 100%; justify-content: flex-start; }
+  .section-picker { order: 2; flex: 1 1 auto; }
+  .section-select { width: 100%; min-width: 0; }
+  .section-context { display: none; }
+  .seg-btn { padding: 0 0.42rem; }
+  .icon-btn { padding: 0 0.32rem; }
+  .section-nav { padding: 0.45rem 1rem; }
+  .section-tab { min-height: 52px; padding: 0 0.8rem; font-size: 0.8rem; }
+  .legend-bar { padding: 0 1rem 0.55rem; }
+  .legend { gap: 0.55rem; font-size: 0.64rem; }
+  .section-head { padding-bottom: 0.7rem; }
+  .section-title { font-size: 1.55rem; }
+  .section-kicker { font-size: 0.6rem; }
+  .exam-section { padding: 0.8rem 0.75rem 1rem; }
+  .workspace { gap: 0.75rem; }
+  .passage-body { padding: 1rem 1rem 1.3rem; }
+  .passage-body p { font-size: 1.02rem; }
+  .analysis-body { padding: 0.6rem 0.55rem 1.2rem; }
+  .bank { grid-template-columns: 1fr; }
+  .wordlist-btn { order: 2; }
+  .wordlist-panel { left: 0.5rem; right: 0.5rem; max-height: 78vh; }
+  .wordlist-panel .vocab-list { grid-template-columns: 1fr; }
+  .vocab-list { grid-template-columns: 1fr; max-height: 34vh; }
+  .vocab-grid { grid-template-columns: 1fr; }
+  .drawer { height: 82dvh; }
+  .drawer-title { font-size: 1.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+}
+
+/* ============================================================
+   Print
+   ============================================================ */
+@media print {
+  @page { margin: 14mm; }
+  body {
+    height: auto;
+    overflow: visible;
+    background: #fff;
+    font-size: 11pt;
+  }
+  .topbar, .section-nav, .legend-bar, .pane-head, .q-index,
+  .drawer, .drawer-backdrop, .toast { display: none !important; }
+  main { overflow: visible; }
+  .exam-section {
+    display: block !important;
+    padding: 0;
+    page-break-after: always;
+  }
+  .exam-section:last-child { page-break-after: auto; }
+  .section-head { padding: 0 0 8mm; }
+  .section-title { font-size: 22pt; }
+  .workspace { display: block; }
+  .pane {
+    overflow: visible;
+    border: 0;
+    box-shadow: none;
+    margin-bottom: 8mm;
+  }
+  .passage-body { max-width: none; padding: 0; }
+  .passage-body p { font-size: 11pt; line-height: 1.7; }
+  .analysis-body { max-width: none; padding: 0; }
+  .q-card {
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ccc;
+    margin-bottom: 6mm;
+  }
+  .option { min-height: 0; }
+  .ev.is-on { background: #f6e9b9 !important; }
+  .drawer, .drawer-backdrop { display: none !important; }
+}
+
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+    <div class="section-context" id="sectionContext" aria-live="polite">
+      <div class="context-title" id="contextTitle">校园花园</div>
+      <div class="context-meta" id="contextMeta">说明文 · Demo 1 · 约 189 词 · 2 题</div>
+    </div>
+
+    <div class="section-picker">
+      <label class="sr-only" for="sectionSelect">选择题型</label>
+      <div class="select-wrap">
+        <select id="sectionSelect" class="section-select" aria-label="选择题型">
+          <option value="reading-a" selected>阅读理解A篇</option>
+        </select>
+      </div>
+    </div>
+    </div>
+
+    <div class="topbar-legend">
+      <div class="legend" aria-label="图例">
+        <span class="legend-item"><i class="swatch swatch-ev"></i>答案依据</span>
+        <span class="legend-item"><i class="swatch swatch-key">[ ]</i>关键词</span>
+        <span class="legend-item"><i class="swatch swatch-gap"></i>空格</span>
+        <span class="legend-item"><i class="swatch swatch-vocab"></i>生词</span>
+        <span class="legend-item"><i class="swatch swatch-cx">析</i>长难句</span>
+        <button class="legend-help" type="button" aria-label="操作提示" title="点按虚线词看释义 · 点按“析”看结构" data-tip="点按虚线词看释义 · 点按“析”看结构">?</button>
+      </div>
+    </div>
+
+    <div class="topbar-actions" role="group" aria-label="页面控制">
+      <div class="seg" role="group" aria-label="字号">
+        <button class="seg-btn" type="button" data-size="normal" aria-pressed="true">标准</button>
+        <button class="seg-btn" type="button" data-size="large" aria-pressed="false">大</button>
+        <button class="seg-btn" type="button" data-size="xlarge" aria-pressed="false">特大</button>
+      </div>
+      <button class="icon-btn" type="button" id="fullscreenBtn" aria-label="全屏">全屏</button>
+      <button class="icon-btn" type="button" id="resetBtn" aria-label="重置高亮">重置</button>
+    </div>
+  </header>
+
+  <main id="app">
+    
+<section class="exam-section" data-section="reading-a" data-kind="reading" id="reading-a">
+  <div class="workspace">
+    <button class="collapsed-rail rail-left" type="button" data-expand="passage" aria-label="展开原文">原文</button>
+    <div class="pane passage-pane" aria-label="原文">
+      <div class="pane-head">
+        <span class="pane-label">PASSAGE / 原文</span>
+        <div class="pane-tools">
+          <button class="lang-toggle" type="button" aria-pressed="true">中英</button>
+          <span class="pane-note">点按空格或“析”查看解析</span>
+        </div>
+      </div>
+      <div class="passage-body is-bilingual">
+        <h3 class="heading" data-block="D-h1">The School Garden Club</h3>
+<p data-block="D-p1">The Garden Club at Riverbend School began with a single <span class="vocab" data-vocab="v1" role="button" tabindex="0" aria-label="查看 raised 的释义">raised</span> bed behind the science building. At first, only six students met after class on Fridays. They planted tomatoes, beans, and sunflowers, and kept a notebook of what grew and what did not.</p>
+<div class="zh" data-zh-for="D-p1">河湾学校的花园社团最初只是科学楼后面的一个种植箱。起初只有六名学生每周五放学后集合。他们种了番茄、豆子和向日葵，并记录下什么长得好、什么没长好。</div>
+<p data-block="D-p2">The club's adviser, Ms. Chen, wanted the project to be more than a hobby. She asked students to test three kinds of <span class="vocab" data-vocab="v2" role="button" tabindex="0" aria-label="查看 soil 的释义">soil</span> and record how much water each bed received. <span class="ev" data-q="1" data-support="B" data-refute="A C D" data-ev="1-E1">The results were surprising: </span><span class="ev" data-q="1" data-support="B" data-refute="A C D" data-ev="1-E1"><span class="lex lex-start lex-end lex-paraphrase" data-link="1-B-b718c91a">the bed with the least water produced the sweetest tomatoes</span></span><span class="ev" data-q="1" data-support="B" data-refute="A C D" data-ev="1-E1">.</span> <span class="cx" data-complex="D-c1" role="button" tabindex="0" aria-label="查看长难句结构分析">Students learned that more water does not always mean better </span><span class="cx" data-complex="D-c1" role="button" tabindex="0" aria-label="查看长难句结构分析"><span class="vocab" data-vocab="v8" role="button" tabindex="0" aria-label="查看 growth 的释义">growth</span></span><span class="cx" data-complex="D-c1" role="button" tabindex="0" aria-label="查看长难句结构分析">.</span><span class="cx-mark" data-complex="D-c1" role="button" tabindex="0" aria-label="长难句解析">析</span></p>
+<div class="zh" data-zh-for="D-p2">社团指导老师陈女士希望这个项目不只是一个爱好。她让学生测试三种土壤，并记录每块地浇了多少水。结果令人惊讶：水最少的那块地结出的番茄最甜。学生们由此明白，水多并不一定意味着长得更好。</div>
+<p data-block="D-p3">Last spring, the club opened a small market on the school playground. <span class="ev" data-q="2" data-support="C" data-refute="A B D" data-ev="2-E1">They sold vegetables and </span><span class="ev" data-q="2" data-support="C" data-refute="A B D" data-ev="2-E1"><span class="vocab" data-vocab="v4" role="button" tabindex="0" aria-label="查看 homemade 的释义">homemade</span></span><span class="ev" data-q="2" data-support="C" data-refute="A B D" data-ev="2-E1"> seed packets, and </span><span class="ev" data-q="2" data-support="C" data-refute="A B D" data-ev="2-E1"><span class="lex lex-start lex-end lex-paraphrase" data-link="2-C-4ac3f28b">used the money to buy tools for the school's science lab</span></span><span class="ev" data-q="2" data-support="C" data-refute="A B D" data-ev="2-E1">.</span> <span class="ev" data-q="2" data-support="C" data-refute="" data-ev="2-E2">The market also gave younger students a chance to </span><span class="ev" data-q="2" data-support="C" data-refute="" data-ev="2-E2"><span class="lex lex-start lex-end lex-paraphrase" data-link="2-C-4ac3f28b">ask questions about growing food</span></span><span class="ev" data-q="2" data-support="C" data-refute="" data-ev="2-E2">.</span></p>
+<div class="zh" data-zh-for="D-p3">去年春天，社团在学校操场办了一个小市集。他们出售蔬菜和自制种子包，用收入为学校科学实验室购买工具。市集也让低年级学生有机会询问关于种植食物的问题。</div>
+<p data-block="D-p4">This year, the club plans to build a rain barrel and a <span class="vocab" data-vocab="v5" role="button" tabindex="0" aria-label="查看 compost 的释义">compost</span> bin. <span class="cx" data-complex="D-c2" role="button" tabindex="0" aria-label="查看长难句结构分析">Ms. Chen says the goal is not to produce the biggest </span><span class="cx" data-complex="D-c2" role="button" tabindex="0" aria-label="查看长难句结构分析"><span class="vocab" data-vocab="v3" role="button" tabindex="0" aria-label="查看 harvest 的释义">harvest</span></span><span class="cx" data-complex="D-c2" role="button" tabindex="0" aria-label="查看长难句结构分析">, but to help students </span><span class="cx" data-complex="D-c2" role="button" tabindex="0" aria-label="查看长难句结构分析"><span class="vocab" data-vocab="v6" role="button" tabindex="0" aria-label="查看 notice 的释义">notice</span></span><span class="cx" data-complex="D-c2" role="button" tabindex="0" aria-label="查看长难句结构分析"> the </span><span class="cx" data-complex="D-c2" role="button" tabindex="0" aria-label="查看长难句结构分析"><span class="vocab" data-vocab="v7" role="button" tabindex="0" aria-label="查看 connections 的释义">connections</span></span><span class="cx" data-complex="D-c2" role="button" tabindex="0" aria-label="查看长难句结构分析"> between soil, water, food, and their own choices.</span><span class="cx-mark" data-complex="D-c2" role="button" tabindex="0" aria-label="长难句解析">析</span></p>
+<div class="zh" data-zh-for="D-p4">今年，社团计划建一个雨水桶和一个堆肥箱。陈女士说，目标不是收获最大，而是帮助学生发现土壤、水、食物和自己的选择之间的联系。</div>
+      </div>
+    </div>
+    <div class="splitter" role="separator" aria-orientation="vertical" aria-valuemin="20" aria-valuemax="80" aria-valuenow="56" aria-label="拖动调整原文与解析比例，拖过八成自动收起" tabindex="0"></div>
+    <div class="pane analysis-pane" aria-label="解析">
+      <div class="analysis-tabs" role="tablist" aria-label="右栏视图">
+        <button class="tab-btn is-active" type="button" role="tab" aria-selected="true" data-tab="analysis">解析</button>
+        <button class="tab-btn" type="button" role="tab" aria-selected="false" data-tab="vocab">词汇</button>
+        <button class="tab-btn" type="button" role="tab" aria-selected="false" data-tab="structure">结构</button>
+        <button class="tab-btn" type="button" role="tab" aria-selected="false" data-tab="exam">考点</button>
+      </div>
+      <div class="analysis-body">
+        <div class="tab-panel is-active" data-tab-panel="analysis">
+          
+          <div class="q-index" aria-label="题目快速跳转">
+<button class="q-chip" type="button" data-qjump="1" aria-current="true">1</button>
+<button class="q-chip" type="button" data-qjump="2" aria-current="false">2</button>
+</div>
+          <article class="q-card" data-q="1" data-answer="B" id="q-1">
+<div class="q-head">
+<span class="q-num">1</span>
+<button class="q-reveal" type="button" data-reveal="1" aria-expanded="false">显示答案</button>
+<span class="q-type">细节理解</span>
+<span class="q-answer">B</span>
+<span class="q-source is-key">答案页</span>
+</div>
+<h3 class="q-stem">What did the students discover about watering the beds?</h3>
+<div class="options">
+<button class="option" type="button" data-q="1" data-opt="A" aria-pressed="false"><span class="opt-key">A</span><span class="opt-text">More water always makes tomatoes sweeter.</span><span class="opt-state">定位</span></button>
+<button class="option is-correct" type="button" data-q="1" data-opt="B" aria-pressed="false"><span class="opt-key">B</span><span class="opt-text">The bed with <span class="lex lex-start lex-end lex-paraphrase" data-link="1-B-b718c91a">less water produced sweeter tomatoes</span>.</span><span class="opt-state">答案</span></button>
+<button class="option" type="button" data-q="1" data-opt="C" aria-pressed="false"><span class="opt-key">C</span><span class="opt-text">Tomatoes grow best without any water.</span><span class="opt-state">定位</span></button>
+<button class="option" type="button" data-q="1" data-opt="D" aria-pressed="false"><span class="opt-key">D</span><span class="opt-text">Watering the beds made the soil worse.</span><span class="opt-state">定位</span></button>
+</div>
+<div class="q-feedback" hidden></div>
+<div class="evidence-box">
+<div class="evidence-label">原文依据</div>
+<div class="evidence-quote">“The results were surprising: <span class="lex lex-start lex-end lex-paraphrase" data-link="1-B-b718c91a">the bed with the least water produced the sweetest tomatoes</span>.”</div>
+<div class="evidence-trans">译：结果令人惊讶：水最少的那块地结出的番茄最甜。</div>
+<p class="evidence-note">least water 与 sweetest tomatoes 直接对应 B。</p>
+<div class="link-chips">
+<button class="link-chip " type="button" data-link-jump="1" data-q="1" data-opt="B" title="点击定位该选项的原文依据"><span class="rel">改写</span><span>less water produced sweeter tomatoes</span><span class="arrow">↔</span><span>the bed with the least water produced the sweetest tomatoes</span></button>
+</div>
+</div>
+<div class="notes"><div class="note-row"><span class="note-key">A</span><span>与原文实验结果相反。</span></div><div class="note-row"><span class="note-key">C</span><span>原文没有说完全不浇水。</span></div><div class="note-row"><span class="note-key">D</span><span>原文没有说浇水会让土壤变差。</span></div></div>
+<div class="takeaway"><b>方法</b>比较级 least/sweetest 是最直接的定位词。</div>
+</article>
+<article class="q-card" data-q="2" data-answer="C" id="q-2">
+<div class="q-head">
+<span class="q-num">2</span>
+<button class="q-reveal" type="button" data-reveal="2" aria-expanded="false">显示答案</button>
+<span class="q-type">原因细节</span>
+<span class="q-answer">C</span>
+<span class="q-source is-key">答案页</span>
+</div>
+<h3 class="q-stem">Why did the club open the market?</h3>
+<div class="options">
+<button class="option" type="button" data-q="2" data-opt="A" aria-pressed="false"><span class="opt-key">A</span><span class="opt-text">To sell gardening tools to students.</span><span class="opt-state">定位</span></button>
+<button class="option" type="button" data-q="2" data-opt="B" aria-pressed="false"><span class="opt-key">B</span><span class="opt-text">To buy seeds for the next spring.</span><span class="opt-state">定位</span></button>
+<button class="option is-correct" type="button" data-q="2" data-opt="C" aria-pressed="false"><span class="opt-key">C</span><span class="opt-text">To <span class="lex lex-start lex-end lex-paraphrase" data-link="2-C-4ac3f28b">raise money for the science lab and share gardening knowledge</span>.</span><span class="opt-state">答案</span></button>
+<button class="option" type="button" data-q="2" data-opt="D" aria-pressed="false"><span class="opt-key">D</span><span class="opt-text">To build a rain barrel and a compost bin.</span><span class="opt-state">定位</span></button>
+</div>
+<div class="q-feedback" hidden></div>
+<div class="evidence-box">
+<div class="evidence-label">原文依据</div>
+<div class="evidence-quote">“They sold vegetables and homemade seed packets, and <span class="lex lex-start lex-end lex-paraphrase" data-link="2-C-4ac3f28b">used the money to buy tools for the school's science lab</span>.”</div>
+<div class="evidence-trans">译：他们出售蔬菜和自制种子包，用收入为学校科学实验室购买工具。</div>
+<p class="evidence-note">卖菜和种子包筹钱，给科学实验室买工具。</p>
+<div class="evidence-quote">“The market also gave younger students a chance to <span class="lex lex-start lex-end lex-paraphrase" data-link="2-C-4ac3f28b">ask questions about growing food</span>.”</div>
+<p class="evidence-note">市集也让低年级学生来问种植问题，对应 share knowledge。</p>
+<div class="link-chips">
+<button class="link-chip " type="button" data-link-jump="1" data-q="2" data-opt="C" title="点击定位该选项的原文依据"><span class="rel">改写</span><span>raise money for the science lab and share gardening knowledge</span><span class="arrow">↔</span><span>used the money to buy tools for the school's science lab ... ask questions about growing food</span></button>
+</div>
+</div>
+<div class="notes"><div class="note-row"><span class="note-key">A</span><span>市集卖的是蔬菜和种子包，不是工具。</span></div><div class="note-row"><span class="note-key">B</span><span>收入用于科学实验室工具，不是买种子。</span></div><div class="note-row"><span class="note-key">D</span><span>雨水桶和堆肥箱是今年的计划，不是市集目的。</span></div></div>
+<div class="takeaway"><b>方法</b>题干问 purpose，答案要同时覆盖“筹钱”和“分享知识”两层。</div>
+</article>
+        </div>
+        <div class="tab-panel" data-tab-panel="vocab" hidden>
+          
+<div class="tab-head">
+  <div>
+    <div class="drawer-eyebrow">VOCABULARY / 本篇词汇</div>
+    <h2 class="tab-title">本篇词汇 <span class="tab-count">8 个</span></h2>
+  </div>
+</div>
+<div class="vocab-list tab-vocab-list"><button class="vocab-row" type="button" data-vocab="v1" aria-label="查看 raised 的音标、词性和释义"><span class="vw-main"><span class="vw-word">raised</span><span class="vw-ipa">/reɪzd/</span><span class="vw-pos">adj.</span></span><span class="vw-meaning">凸起的；高出的</span><span class="vw-q">高频</span></button><button class="vocab-row" type="button" data-vocab="v2" aria-label="查看 soil 的音标、词性和释义"><span class="vw-main"><span class="vw-word">soil</span><span class="vw-ipa">/sɔɪl/</span><span class="vw-pos">n.</span></span><span class="vw-meaning">土壤</span><span class="vw-q">高频</span></button><button class="vocab-row" type="button" data-vocab="v3" aria-label="查看 harvest 的音标、词性和释义"><span class="vw-main"><span class="vw-word">harvest</span><span class="vw-ipa">/ˈhɑːvɪst/</span><span class="vw-pos">n.</span></span><span class="vw-meaning">收获；收成</span><span class="vw-q">高频</span></button><button class="vocab-row" type="button" data-vocab="v4" aria-label="查看 homemade 的音标、词性和释义"><span class="vw-main"><span class="vw-word">homemade</span><span class="vw-ipa">/ˌhəʊmˈmeɪd/</span><span class="vw-pos">adj.</span></span><span class="vw-meaning">自制的</span><span class="vw-q">高频</span></button><button class="vocab-row" type="button" data-vocab="v5" aria-label="查看 compost 的音标、词性和释义"><span class="vw-main"><span class="vw-word">compost</span><span class="vw-ipa">/ˈkɒmpɒst/</span><span class="vw-pos">n.</span></span><span class="vw-meaning">堆肥</span><span class="vw-q">高频</span></button><button class="vocab-row" type="button" data-vocab="v6" aria-label="查看 notice 的音标、词性和释义"><span class="vw-main"><span class="vw-word">notice</span><span class="vw-ipa">/ˈnəʊtɪs/</span><span class="vw-pos">v.</span></span><span class="vw-meaning">注意到；察觉</span><span class="vw-q">高频</span></button><button class="vocab-row" type="button" data-vocab="v7" aria-label="查看 connections 的音标、词性和释义"><span class="vw-main"><span class="vw-word">connections</span><span class="vw-ipa">/kəˈnekʃn/</span><span class="vw-pos">n.</span></span><span class="vw-meaning">联系；关联</span><span class="vw-q">高频</span></button><button class="vocab-row" type="button" data-vocab="v8" aria-label="查看 growth 的音标、词性和释义"><span class="vw-main"><span class="vw-word">growth</span><span class="vw-ipa">/ɡrəʊθ/</span><span class="vw-pos">n.</span></span><span class="vw-meaning">生长；增长</span><span class="vw-q">高频</span></button></div>
+
+        </div>
+        <div class="tab-panel" data-tab-panel="structure" hidden>
+          
+<div class="tab-head">
+  <div>
+    <div class="drawer-eyebrow">STRUCTURE / 篇章结构</div>
+    <h2 class="tab-title">结构图 · 主旨链</h2>
+    <div class="tab-sub">说明文 · 校园项目</div>
+  </div>
+</div>
+<div class="structure-overview">总—分—总：社团成立 → 实验发现 → 市集影响 → 未来计划与理念。</div>
+<div class="tab-hint is-strong">点按结构节点或主旨链，左侧原文会自动定位并高亮。</div>
+<div class="tab-section-title">结构图</div>
+<div class="structure-flow"><button class="structure-flow-node" type="button" data-blocks="D-p1"><span class="node-index">01</span><span class="node-label">介绍社团与种植活动</span><span class="node-main">六名学生周五放学后种植并记录。</span><span class="node-jump">定位原文 →</span></button><button class="structure-flow-node" type="button" data-blocks="D-p2"><span class="node-index">02</span><span class="node-label">测试土壤与浇水</span><span class="node-main">水最少的番茄最甜，水多不一定更好。</span><span class="node-jump">定位原文 →</span></button><button class="structure-flow-node" type="button" data-blocks="D-p3"><span class="node-index">03</span><span class="node-label">市集筹款与分享</span><span class="node-main">卖菜和种子包，为科学实验室买工具，让低年级学生提问。</span><span class="node-jump">定位原文 →</span></button><button class="structure-flow-node" type="button" data-blocks="D-p4"><span class="node-index">04</span><span class="node-label">未来计划与主旨</span><span class="node-main">建雨水桶和堆肥箱，关注土壤、水、食物与选择之间的联系。</span><span class="node-jump">定位原文 →</span></button></div>
+<div class="tab-section-title">主旨链</div>
+<div class="idea-chain"><button class="idea-step" type="button" data-blocks="D-p1"><span class="idea-index">1</span><span class="idea-body"><span class="idea-label">起因</span><span class="idea-text">花园社团从一个小种植箱开始。</span></span></button><button class="idea-step" type="button" data-blocks="D-p2"><span class="idea-index">2</span><span class="idea-body"><span class="idea-label">发现</span><span class="idea-text">水少反而更甜，水多不一定更好。</span></span></button><button class="idea-step" type="button" data-blocks="D-p3"><span class="idea-index">3</span><span class="idea-body"><span class="idea-label">影响</span><span class="idea-text">市集筹钱买工具，也让低年级学生了解种植。</span></span></button><button class="idea-step" type="button" data-blocks="D-p4"><span class="idea-index">4</span><span class="idea-body"><span class="idea-label">理念</span><span class="idea-text">目标不是最大收获，而是理解土壤、水、食物与选择之间的联系。</span></span></button></div>
+<div class="tab-section-title">一句话主旨</div>
+<div class="main-statement">校园花园社团通过种植、实验和市集，让学生理解土壤、水、食物与日常选择之间的联系。</div>
+<div class="main-grid"><div class="main-cell"><span class="k">写作目的</span><span class="v">说明校园花园项目的教育价值，而不只是生产食物。</span></div><div class="main-cell"><span class="k">主题</span><span class="v">校园实践、食物教育与选择</span></div><div class="main-cell"><span class="k">语气</span><span class="v">客观、说明</span></div></div>
+<div class="tab-hint">主旨题先看“对象 + 作者态度 + 写作目的”，不要只抓一个细节。</div>
+<div class="structure-note"><b>逻辑</b>时间线（起初 → 去年春天 → 今年）+ 由事件到理念。</div>
+<div class="structure-note"><b>结构考点</b>第 1 题考比较级细节；第 2 题考目的，需要同时覆盖筹钱和分享知识。</div>
+
+        </div>
+        <div class="tab-panel" data-tab-panel="exam" hidden>
+          
+<div class="tab-head">
+  <div>
+    <div class="drawer-eyebrow">EXAM POINTS / 高频考点</div>
+    <h2 class="tab-title">高频考点分析</h2>
+    <div class="tab-sub">关键词 · 考法 · 原文对应</div>
+  </div>
+</div>
+<div class="tab-hint is-strong">点按考点卡，左侧原文会自动定位并高亮。</div>
+<div class="exam-list"><button class="exam-card is-link" type="button" data-blocks="D-p2"><span class="exam-kicker">细节理解</span><span class="exam-title">least / sweetest 比较级</span><span class="exam-analysis">题干问发现，原文用 least 与 sweetest 构成对比；答案 B 把比较级改写为 less / sweeter。</span><span class="exam-meta"><span class="exam-pill">least water</span><span class="exam-pill">sweetest tomatoes</span><span class="exam-pill is-q">Q1</span></span></button><button class="exam-card is-link" type="button" data-blocks="D-p3"><span class="exam-kicker">目的细节</span><span class="exam-title">used the money to ...</span><span class="exam-analysis">市集收入用于科学实验室工具，不是买种子或卖工具。</span><span class="exam-meta"><span class="exam-pill">used the money</span><span class="exam-pill">science lab</span><span class="exam-pill is-q">Q2</span></span></button><button class="exam-card is-link" type="button" data-blocks="D-p3"><span class="exam-kicker">主旨/写作目的</span><span class="exam-title">not ... but ...</span><span class="exam-analysis">结尾用 not ... but ... 把重点从“最大收获”转到“理解联系”，是全文主旨。</span><span class="exam-meta"><span class="exam-pill">not to produce</span><span class="exam-pill">but to help</span><span class="exam-pill is-q">Q2</span></span></button></div>
+
+        </div>
+      </div>
+    </div>
+    <button class="collapsed-rail rail-right" type="button" data-expand="analysis" aria-label="展开解析">解析</button>
+  </div>
+</section>
+
+  </main>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <div class="drawer-eyebrow" id="drawerEyebrow">词汇</div>
+        <h2 class="drawer-title" id="drawerTitle">—</h2>
+      </div>
+      <button class="drawer-close" type="button" id="drawerClose" aria-label="关闭详情">关闭</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="application/json" id="examData">{"schemaVersion":1,"meta":{"title":"MrLiHua · 李华同学","subtitle":"高中英语试卷 · 交互解析","exam":"Synthetic demo · Reading A","source":"Original synthetic demo content","answerSource":"key","answerNote":"This demo uses invented content and answers for interface demonstration only.","generatedAt":"2026-10-28"},"sections":[{"id":"reading-a","kind":"reading","label":"阅读 A","title":"阅读理解 A","topic":"校园花园","genre":"说明文","pages":"Demo 1","intro":"Read the passage and choose the best answer for each question.","answerSource":"key","passage":{"blocks":[{"id":"D-h1","kind":"heading","text":"The School Garden Club"},{"id":"D-p1","kind":"paragraph","text":"The Garden Club at Riverbend School began with a single raised bed behind the science building. At first, only six students met after class on Fridays. They planted tomatoes, beans, and sunflowers, and kept a notebook of what grew and what did not.","zh":"河湾学校的花园社团最初只是科学楼后面的一个种植箱。起初只有六名学生每周五放学后集合。他们种了番茄、豆子和向日葵，并记录下什么长得好、什么没长好。"},{"id":"D-p2","kind":"paragraph","text":"The club's adviser, Ms. Chen, wanted the project to be more than a hobby. She asked students to test three kinds of soil and record how much water each bed received. The results were surprising: the bed with the least water produced the sweetest tomatoes. Students learned that more water does not always mean better growth.","zh":"社团指导老师陈女士希望这个项目不只是一个爱好。她让学生测试三种土壤，并记录每块地浇了多少水。结果令人惊讶：水最少的那块地结出的番茄最甜。学生们由此明白，水多并不一定意味着长得更好。"},{"id":"D-p3","kind":"paragraph","text":"Last spring, the club opened a small market on the school playground. They sold vegetables and homemade seed packets, and used the money to buy tools for the school's science lab. The market also gave younger students a chance to ask questions about growing food.","zh":"去年春天，社团在学校操场办了一个小市集。他们出售蔬菜和自制种子包，用收入为学校科学实验室购买工具。市集也让低年级学生有机会询问关于种植食物的问题。"},{"id":"D-p4","kind":"paragraph","text":"This year, the club plans to build a rain barrel and a compost bin. Ms. Chen says the goal is not to produce the biggest harvest, but to help students notice the connections between soil, water, food, and their own choices.","zh":"今年，社团计划建一个雨水桶和一个堆肥箱。陈女士说，目标不是收获最大，而是帮助学生发现土壤、水、食物和自己的选择之间的联系。"}]},"questions":[{"id":"1","stem":"What did the students discover about watering the beds?","options":[{"key":"A","text":"More water always makes tomatoes sweeter."},{"key":"B","text":"The bed with less water produced sweeter tomatoes."},{"key":"C","text":"Tomatoes grow best without any water."},{"key":"D","text":"Watering the beds made the soil worse."}],"answer":"B","answerSource":"key","evidence":[{"id":"1-E1","block":"D-p2","quote":"The results were surprising: the bed with the least water produced the sweetest tomatoes.","supports":["B"],"refutes":["A","C","D"],"note":"least water 与 sweetest tomatoes 直接对应 B。","translation":"结果令人惊讶：水最少的那块地结出的番茄最甜。"}],"optionNotes":{"A":"与原文实验结果相反。","C":"原文没有说完全不浇水。","D":"原文没有说浇水会让土壤变差。"},"links":[{"optionKey":"B","optionPhrase":"less water produced sweeter tomatoes","sourcePhrase":"the bed with the least water produced the sweetest tomatoes","type":"paraphrase","note":"least → less，sweetest → sweeter。"}],"typeLabel":"细节理解","takeaway":"比较级 least/sweetest 是最直接的定位词。"},{"id":"2","stem":"Why did the club open the market?","options":[{"key":"A","text":"To sell gardening tools to students."},{"key":"B","text":"To buy seeds for the next spring."},{"key":"C","text":"To raise money for the science lab and share gardening knowledge."},{"key":"D","text":"To build a rain barrel and a compost bin."}],"answer":"C","answerSource":"key","evidence":[{"id":"2-E1","block":"D-p3","quote":"They sold vegetables and homemade seed packets, and used the money to buy tools for the school's science lab.","supports":["C"],"refutes":["A","B","D"],"note":"卖菜和种子包筹钱，给科学实验室买工具。","translation":"他们出售蔬菜和自制种子包，用收入为学校科学实验室购买工具。"},{"id":"2-E2","block":"D-p3","quote":"The market also gave younger students a chance to ask questions about growing food.","supports":["C"],"refutes":[],"note":"市集也让低年级学生来问种植问题，对应 share knowledge。"}],"optionNotes":{"A":"市集卖的是蔬菜和种子包，不是工具。","B":"收入用于科学实验室工具，不是买种子。","D":"雨水桶和堆肥箱是今年的计划，不是市集目的。"},"links":[{"optionKey":"C","optionPhrase":"raise money for the science lab and share gardening knowledge","sourcePhrase":"used the money to buy tools for the school's science lab ... ask questions about growing food","type":"paraphrase","note":"筹钱买工具 + 让低年级学生提问 = C。"}],"typeLabel":"原因细节","takeaway":"题干问 purpose，答案要同时覆盖“筹钱”和“分享知识”两层。"}],"vocab":[{"id":"v1","word":"raised","block":"D-p1","context":"a single raised bed behind the science building","ipa":"/reɪzd/","pos":"adj.","meaning":"凸起的；高出的","collocation":"a raised bed","example":"The herbs grow in a raised bed.","level":"core","wordlist":true},{"id":"v2","word":"soil","block":"D-p2","context":"She asked students to test three kinds of soil","ipa":"/sɔɪl/","pos":"n.","meaning":"土壤","collocation":"rich soil / test the soil","example":"The soil here is dark and rich.","level":"core","wordlist":true},{"id":"v3","word":"harvest","block":"D-p4","context":"the biggest harvest","ipa":"/ˈhɑːvɪst/","pos":"n.","meaning":"收获；收成","collocation":"a good harvest","example":"The farmers expect a good harvest.","level":"core","wordlist":true},{"id":"v4","word":"homemade","block":"D-p3","context":"homemade seed packets","ipa":"/ˌhəʊmˈmeɪd/","pos":"adj.","meaning":"自制的","collocation":"homemade bread","example":"She brought homemade cookies.","level":"core","wordlist":true},{"id":"v5","word":"compost","block":"D-p4","context":"a compost bin","ipa":"/ˈkɒmpɒst/","pos":"n.","meaning":"堆肥","collocation":"make compost","example":"They turn food waste into compost.","level":"core","wordlist":true},{"id":"v6","word":"notice","block":"D-p4","context":"help students notice the connections","ipa":"/ˈnəʊtɪs/","pos":"v.","meaning":"注意到；察觉","collocation":"notice the difference","example":"Did you notice the change?","level":"core","wordlist":true},{"id":"v7","word":"connections","block":"D-p4","context":"the connections between soil, water, food, and their own choices","ipa":"/kəˈnekʃn/","pos":"n.","meaning":"联系；关联","collocation":"the connection between A and B","example":"She explained the connection between diet and health.","level":"core","wordlist":true},{"id":"v8","word":"growth","block":"D-p2","context":"more water does not always mean better growth","ipa":"/ɡrəʊθ/","pos":"n.","meaning":"生长；增长","collocation":"plant growth","example":"Sunlight is necessary for growth.","level":"core","wordlist":true}],"complex":[{"id":"D-c1","block":"D-p2","quote":"Students learned that more water does not always mean better growth.","main":"Students learned that more water does not always mean better growth.","layers":["that 引导宾语从句，作 learned 的宾语。","not always 表示“并不总是”，否定的是“水多=长得更好”的简单对应。"],"translation":"学生们由此明白，水多并不一定意味着长得更好。"},{"id":"D-c2","block":"D-p4","quote":"Ms. Chen says the goal is not to produce the biggest harvest, but to help students notice the connections between soil, water, food, and their own choices.","main":"Ms. Chen says the goal is not to produce the biggest harvest, but to help students notice the connections.","layers":["says 后接宾语从句。","not to produce ... but to help ... 是并列不定式结构，表示“不是……而是……”。","between soil, water, food, and their own choices 修饰 connections。"],"translation":"陈女士说，目标不是收获最大，而是帮助学生发现土壤、水、食物和自己的选择之间的联系。"}],"structure":{"type":"说明文 · 校园项目","overview":"总—分—总：社团成立 → 实验发现 → 市集影响 → 未来计划与理念。","parts":[{"label":"起因","function":"介绍社团与种植活动","main":"六名学生周五放学后种植并记录。","blocks":["D-p1"]},{"label":"实验","function":"测试土壤与浇水","main":"水最少的番茄最甜，水多不一定更好。","blocks":["D-p2"]},{"label":"影响","function":"市集筹款与分享","main":"卖菜和种子包，为科学实验室买工具，让低年级学生提问。","blocks":["D-p3"]},{"label":"理念","function":"未来计划与主旨","main":"建雨水桶和堆肥箱，关注土壤、水、食物与选择之间的联系。","blocks":["D-p4"]}],"logic":"时间线（起初 → 去年春天 → 今年）+ 由事件到理念。","examFocus":"第 1 题考比较级细节；第 2 题考目的，需要同时覆盖筹钱和分享知识。"},"mainIdeaChain":[{"label":"起因","idea":"花园社团从一个小种植箱开始。","blocks":["D-p1"]},{"label":"发现","idea":"水少反而更甜，水多不一定更好。","blocks":["D-p2"]},{"label":"影响","idea":"市集筹钱买工具，也让低年级学生了解种植。","blocks":["D-p3"]},{"label":"理念","idea":"目标不是最大收获，而是理解土壤、水、食物与选择之间的联系。","blocks":["D-p4"]}],"mainIdea":{"statement":"校园花园社团通过种植、实验和市集，让学生理解土壤、水、食物与日常选择之间的联系。","purpose":"说明校园花园项目的教育价值，而不只是生产食物。","theme":"校园实践、食物教育与选择","tone":"客观、说明"},"examPoints":[{"title":"least / sweetest 比较级","kind":"细节理解","words":["least water","sweetest tomatoes"],"analysis":"题干问发现，原文用 least 与 sweetest 构成对比；答案 B 把比较级改写为 less / sweeter。","questions":["1"]},{"title":"used the money to ...","kind":"目的细节","words":["used the money","science lab"],"analysis":"市集收入用于科学实验室工具，不是买种子或卖工具。","questions":["2"]},{"title":"not ... but ...","kind":"主旨/写作目的","words":["not to produce","but to help"],"analysis":"结尾用 not ... but ... 把重点从“最大收获”转到“理解联系”，是全文主旨。","questions":["2"]}]}]}</script>
+  <script>
+(() => {
+  "use strict";
+
+  const dataEl = document.getElementById("examData");
+  if (!dataEl) return;
+
+  let data;
+  try {
+    data = JSON.parse(dataEl.textContent);
+  } catch (err) {
+    console.error("Invalid exam JSON", err);
+    return;
+  }
+
+  const sections = Array.isArray(data.sections) ? data.sections : [];
+  if (!sections.length) return;
+
+  const sectionMap = new Map(sections.map((s) => [s.id, s]));
+  const questionMap = new Map();
+  const vocabMap = new Map();
+  const complexMap = new Map();
+
+  for (const section of sections) {
+    for (const q of section.questions || []) {
+      questionMap.set(String(q.id), { q, section });
+    }
+    for (const v of section.vocab || []) vocabMap.set(v.id, v);
+    for (const c of section.complex || []) complexMap.set(c.id, c);
+  }
+
+  const state = {
+    section: null,
+    qid: null,
+    opt: null,
+    tab: "analysis",
+  };
+
+  const KIND_LABELS = {
+    reading: "READING",
+    seven: "SEVEN-CHOICE",
+    cloze: "CLOZE",
+    grammar: "GRAMMAR",
+  };
+
+  const isFinePointer = () => window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function esc(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function currentSectionEl() {
+    return state.section ? document.querySelector(`.exam-section[data-section="${state.section}"]`) : null;
+  }
+
+  function sectionWordCount(section) {
+    const text = (section.passage && section.passage.blocks ? section.passage.blocks : [])
+      .map((b) => b.text || "")
+      .join(" ")
+      .replace(/\{\{\d+\}\}/g, " ");
+    const words = text.match(/[A-Za-z][A-Za-z'’\-]*/g);
+    return words ? words.length : 0;
+  }
+
+  function updateSectionContext(section) {
+    if (!section) return;
+    const title = document.getElementById("contextTitle");
+    const meta = document.getElementById("contextMeta");
+    if (!title || !meta) return;
+    title.textContent = section.topic || section.title || "";
+    const genre = section.genre ? `${section.genre} · ` : "";
+    meta.textContent = `${genre}${section.pages || ""} · 约 ${sectionWordCount(section)} 词 · ${(section.questions || []).length} 题`;
+  }
+
+  function setPressed(el, value) {
+    if (el) el.setAttribute("aria-pressed", value ? "true" : "false");
+  }
+
+  function applyHighlight(qid, opt, options = {}) {
+    const sectionEl = currentSectionEl();
+    if (!sectionEl) return;
+    const qEntry = questionMap.get(String(qid));
+    if (!qEntry) return;
+    const answer = String(qEntry.q.answer || "");
+    const currentOpt = opt == null ? "" : String(opt);
+    const card = sectionEl.querySelector(`.q-card[data-q="${qid}"]`);
+    const revealed = Boolean(card && card.classList.contains("is-revealed"));
+
+    // Options: only the option belonging to the active question may be active.
+    $$(".option", sectionEl).forEach((el) => {
+      const on = el.dataset.q === String(qid) && el.dataset.opt === currentOpt;
+      el.classList.toggle("is-active", on);
+      setPressed(el, on);
+    });
+
+    // Evidence spans: support/refute lists are space-separated.
+    let anyOn = false;
+    const evidence = $$(".ev", sectionEl);
+    evidence.forEach((el) => {
+      const sameQ = el.dataset.q === String(qid);
+      const supports = (el.dataset.support || "").split(/\s+/).filter(Boolean);
+      const refutes = (el.dataset.refute || "").split(/\s+/).filter(Boolean);
+      let on = false;
+      let refute = false;
+      if (sameQ && revealed) {
+        if (!currentOpt) {
+          on = true;
+        } else if (supports.includes(currentOpt) || refutes.includes(currentOpt)) {
+          on = true;
+          refute = refutes.includes(currentOpt);
+        }
+      }
+      el.classList.toggle("is-on", on);
+      el.classList.toggle("is-refute", on && refute);
+      el.classList.remove("is-fallback");
+      if (!on) {
+        el.classList.remove("ev-awaiting", "ev-wipe");
+      } else if (options.animateEvidence) {
+        el.classList.add("ev-awaiting");
+        el.classList.remove("ev-wipe");
+      }
+      if (on) anyOn = true;
+    });
+
+    // A wrong option may not have a direct "refutes" span.  In that case show
+    // the key evidence for the correct answer in a lighter fallback style,
+    // and explain why the highlight is not option-specific.
+    let fallback = false;
+    if (revealed && currentOpt && currentOpt !== answer && !anyOn) {
+      evidence.forEach((el) => {
+        if (el.dataset.q !== String(qid)) return;
+        const supports = (el.dataset.support || "").split(/\s+/).filter(Boolean);
+        if (!supports.length || supports.includes(answer)) {
+          el.classList.add("is-on", "is-fallback");
+          if (options.animateEvidence) {
+            el.classList.add("ev-awaiting");
+            el.classList.remove("ev-wipe");
+          }
+          anyOn = true;
+          fallback = true;
+        }
+      });
+    }
+
+    // Gaps in the passage.
+    $$(".gap", sectionEl).forEach((el) => {
+      el.classList.toggle("is-active", el.dataset.gap === String(qid));
+    });
+
+    // Seven-choice option bank.
+    $$(".bank-item", sectionEl).forEach((el) => {
+      const on = el.dataset.gap === String(qid);
+      el.classList.toggle("is-active", on);
+      setPressed(el, on);
+    });
+
+    // Link chips inside the active card.
+    $$(".link-chip", sectionEl).forEach((el) => {
+      const on = el.dataset.q === String(qid) && el.dataset.opt === currentOpt;
+      el.classList.toggle("is-current", on);
+    });
+
+    // Keep the active card's current answer state accessible.
+    if (card) {
+      card.dataset.currentOpt = currentOpt;
+      card.dataset.answer = answer;
+      const feedback = card.querySelector(".q-feedback");
+      if (feedback) {
+        if (fallback) {
+          feedback.hidden = false;
+          feedback.textContent = "该选项在原文中没有直接依据；下面以浅色显示本题正确项的关键依据，便于对照排除。";
+        } else {
+          feedback.hidden = true;
+          feedback.textContent = "";
+        }
+      }
+    }
+  }
+
+  function scrollEvidenceIntoView(onDone) {
+    const sectionEl = currentSectionEl();
+    if (!sectionEl) {
+      if (onDone) onDone();
+      return;
+    }
+    const pane = sectionEl.querySelector(".passage-pane");
+    const ev = pane ? pane.querySelector(".ev.is-on") : null;
+    if (!pane || !ev) {
+      if (onDone) onDone();
+      return;
+    }
+
+    // Scroll to the paragraph that contains the evidence, not to the inline
+    // span itself.  This keeps the paragraph in context and lets the inline
+    // highlight animate only after the smooth scroll has completely stopped.
+    const block = ev.closest("[data-block]") || ev;
+    const pr = pane.getBoundingClientRect();
+    const br = block.getBoundingClientRect();
+    const head = pane.querySelector(".pane-head");
+    const headH = head ? head.getBoundingClientRect().height : 0;
+    const needsScroll = br.top < pr.top + headH + 8 || br.bottom > pr.bottom - 24;
+
+    if (!needsScroll) {
+      if (onDone) requestAnimationFrame(onDone);
+      return;
+    }
+
+    if (!onDone) {
+      block.scrollIntoView({ block: "center", behavior: reduceMotion() ? "auto" : "smooth" });
+      return;
+    }
+
+    let done = false;
+    let quietTimer = null;
+    let hardTimer = null;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      if (quietTimer) clearTimeout(quietTimer);
+      if (hardTimer) clearTimeout(hardTimer);
+      pane.removeEventListener("scroll", onScroll);
+      pane.removeEventListener("scrollend", finish);
+      onDone();
+    };
+    const onScroll = () => {
+      if (quietTimer) clearTimeout(quietTimer);
+      quietTimer = setTimeout(finish, 140);
+    };
+
+    pane.addEventListener("scroll", onScroll, { passive: true });
+    pane.addEventListener("scrollend", finish, { once: true });
+    hardTimer = setTimeout(finish, 1200);
+
+    const behavior = reduceMotion() ? "auto" : "smooth";
+    block.scrollIntoView({ block: "center", behavior });
+    if (behavior === "auto") requestAnimationFrame(finish);
+  }
+
+  function playEvidenceWipe(qid) {
+    const sectionEl = currentSectionEl();
+    if (!sectionEl) return;
+    const spans = $$(`.ev[data-q="${String(qid)}"].is-on`, sectionEl);
+    spans.forEach((el) => {
+      el.classList.remove("ev-awaiting");
+      el.classList.add("ev-wipe");
+    });
+  }
+
+  function scrollCardIntoView(qid) {
+    const sectionEl = currentSectionEl();
+    if (!sectionEl) return;
+    const card = sectionEl.querySelector(`.q-card[data-q="${qid}"]`);
+    if (card) {
+      card.scrollIntoView({ block: "nearest", behavior: reduceMotion() ? "auto" : "smooth" });
+    }
+  }
+
+  function activate(qid, opt, options = {}) {
+    const entry = questionMap.get(String(qid));
+    if (!entry) return;
+    state.qid = String(qid);
+    // Grammar answers are words, not option keys.  Empty opt means "show all
+    // evidence for this blank"; it must not be compared with option letters.
+    state.opt = entry.section.kind === "grammar" ? "" : (opt == null ? "" : String(opt));
+
+    const sectionEl = currentSectionEl();
+    if (!sectionEl) return;
+
+    $$(".q-card", sectionEl).forEach((el) => {
+      el.classList.toggle("is-active", el.dataset.q === String(qid));
+    });
+    $$(".q-chip", sectionEl).forEach((el) => {
+      const on = el.dataset.qjump === String(qid);
+      el.setAttribute("aria-current", on ? "true" : "false");
+    });
+
+    applyHighlight(state.qid, state.opt, { animateEvidence: options.animateEvidence });
+
+    if (options.scrollCard) scrollCardIntoView(state.qid);
+    if (options.scrollEvidence !== false) {
+      // Only scroll the passage when the user chose an option/gap, not when
+      // switching sections (the pane is already at the top).
+      if (options.scrollEvidence) scrollEvidenceIntoView();
+    }
+  }
+
+  function showSection(id, options = {}) {
+    const section = sectionMap.get(id);
+    if (!section) return;
+    closeWordlist(false);
+    state.section = id;
+    updateSectionContext(section);
+    const select = document.getElementById("sectionSelect");
+    if (select) select.value = id;
+
+    $$(".exam-section").forEach((el) => {
+      el.hidden = el.dataset.section !== id;
+    });
+    $$(".section-tab").forEach((el) => {
+      el.setAttribute("aria-current", el.dataset.target === id ? "true" : "false");
+    });
+
+    const sectionEl = currentSectionEl();
+    if (!sectionEl) return;
+    $$(".pane", sectionEl).forEach((p) => { p.scrollTop = 0; });
+    setTab(state.tab, { scroll: false });
+
+    const first = (section.questions || [])[0];
+    if (first) {
+      activate(first.id, "", { scrollCard: false, scrollEvidence: false });
+    }
+
+    try {
+      history.replaceState(null, "", `#/${id}`);
+    } catch (_) { /* file:// can be strict; ignore */ }
+
+    applyWorkspaceState();
+
+    if (options.focusNav) {
+      const tab = document.querySelector(`.section-tab[data-target="${id}"]`);
+      if (tab) tab.focus({ preventScroll: true });
+    }
+  }
+
+  /* ---------- split view ---------- */
+  let splitRatio = 56;
+  let collapsedSide = null;
+  let splitDrag = null;
+
+  function setSplitValue(value) {
+    splitRatio = Math.max(20, Math.min(80, Number(value) || 56));
+    document.documentElement.style.setProperty("--split", `${splitRatio}%`);
+    $$(".splitter").forEach((sp) => sp.setAttribute("aria-valuenow", String(Math.round(splitRatio))));
+  }
+
+  function applyWorkspaceState() {
+    $$(".workspace").forEach((ws) => {
+      ws.classList.toggle("is-collapsed-passage", collapsedSide === "passage");
+      ws.classList.toggle("is-collapsed-analysis", collapsedSide === "analysis");
+    });
+    $$(".splitter").forEach((sp) => sp.setAttribute("aria-valuenow", String(Math.round(splitRatio))));
+  }
+
+  function collapseWorkspaceSide(side) {
+    if (side !== "passage" && side !== "analysis") return;
+    collapsedSide = side;
+    applyWorkspaceState();
+    const rail = document.querySelector(`.collapsed-rail[data-expand="${side}"]`);
+    if (rail) rail.focus({ preventScroll: true });
+  }
+
+  function expandWorkspaceSide() {
+    collapsedSide = null;
+    setSplitValue(56);
+    applyWorkspaceState();
+    const sectionEl = currentSectionEl();
+    const splitter = sectionEl ? sectionEl.querySelector(".splitter") : null;
+    if (splitter) splitter.focus({ preventScroll: true });
+  }
+
+  function splitFromEvent(event, workspace) {
+    const rect = workspace.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    setSplitValue(((event.clientX - rect.left) / rect.width) * 100);
+  }
+
+  function initSplitters() {
+    $$(".splitter").forEach((splitter) => {
+      splitter.addEventListener("pointerdown", (event) => {
+        if (event.button !== undefined && event.button !== 0) return;
+        if (collapsedSide) return;
+        const workspace = splitter.closest(".workspace");
+        if (!workspace) return;
+        event.preventDefault();
+        splitDrag = { workspace, pointerId: event.pointerId };
+        try { splitter.setPointerCapture(event.pointerId); } catch (_) { /* ignore */ }
+        document.body.classList.add("is-splitting");
+        splitFromEvent(event, workspace);
+      });
+
+      splitter.addEventListener("pointermove", (event) => {
+        if (!splitDrag || event.pointerId !== splitDrag.pointerId) return;
+        splitFromEvent(event, splitDrag.workspace);
+      });
+
+      const finish = (event) => {
+        if (!splitDrag || event.pointerId !== splitDrag.pointerId) return;
+        document.body.classList.remove("is-splitting");
+        try { splitter.releasePointerCapture(event.pointerId); } catch (_) { /* ignore */ }
+        splitDrag = null;
+        if (splitRatio >= 80) collapseWorkspaceSide("analysis");
+        else if (splitRatio <= 20) collapseWorkspaceSide("passage");
+      };
+      splitter.addEventListener("pointerup", finish);
+      splitter.addEventListener("pointercancel", finish);
+
+      splitter.addEventListener("keydown", (event) => {
+        if (collapsedSide) return;
+        let next = null;
+        if (event.key === "ArrowLeft") next = splitRatio - (event.shiftKey ? 5 : 2);
+        else if (event.key === "ArrowRight") next = splitRatio + (event.shiftKey ? 5 : 2);
+        else if (event.key === "Home") next = 20;
+        else if (event.key === "End") next = 80;
+        if (next === null) return;
+        event.preventDefault();
+        setSplitValue(next);
+        if (splitRatio >= 80) collapseWorkspaceSide("analysis");
+        else if (splitRatio <= 20) collapseWorkspaceSide("passage");
+      });
+    });
+  }
+
+  /* ---------- right-pane tabs + passage anchors ---------- */
+  function setTab(name, options = {}) {
+    const tab = name || "analysis";
+    state.tab = tab;
+    const secEl = currentSectionEl();
+    if (!secEl) return;
+    $$(".tab-btn", secEl).forEach((btn) => {
+      const on = btn.dataset.tab === tab;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    $$(".tab-panel", secEl).forEach((panel) => {
+      const on = panel.dataset.tabPanel === tab;
+      panel.hidden = !on;
+      panel.classList.toggle("is-active", on);
+    });
+    if (options.scroll) {
+      const body = secEl.querySelector(".analysis-body");
+      if (body) body.scrollTop = 0;
+    }
+  }
+
+  $$(".analysis-tabs").forEach((bar) => {
+    bar.addEventListener("click", (event) => {
+      const btn = event.target.closest(".tab-btn");
+      if (!btn) return;
+      setTab(btn.dataset.tab, { scroll: true });
+    });
+  });
+
+  let jumpTimer = null;
+  function jumpToBlocks(value) {
+    const ids = String(value || "").split(",").map((s) => s.trim()).filter(Boolean);
+    if (!ids.length) return;
+    const secEl = currentSectionEl();
+    if (!secEl) return;
+    const ws = secEl.querySelector(".workspace");
+    if (ws && ws.classList.contains("is-collapsed-passage")) expandWorkspaceSide();
+    const pane = secEl.querySelector(".passage-pane");
+    if (!pane) return;
+    const els = ids
+      .map((id) => secEl.querySelector(`.passage-body [data-block="${id}"]`))
+      .filter(Boolean);
+    if (!els.length) return;
+    $$(".passage-body [data-block].is-target", secEl).forEach((el) => el.classList.remove("is-target"));
+    els.forEach((el) => el.classList.add("is-target"));
+    const head = pane.querySelector(".pane-head");
+    const headH = head ? head.getBoundingClientRect().height : 0;
+    const pr = pane.getBoundingClientRect();
+    const er = els[0].getBoundingClientRect();
+    const top = Math.max(0, pane.scrollTop + er.top - pr.top - headH - 14);
+    pane.scrollTo({ top, behavior: reduceMotion() ? "auto" : "smooth" });
+    if (jumpTimer) clearTimeout(jumpTimer);
+    jumpTimer = setTimeout(() => {
+      els.forEach((el) => el.classList.remove("is-target"));
+    }, 1900);
+  }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target.closest("[data-blocks]");
+    if (!target || target.closest(".passage-body")) return;
+    jumpToBlocks(target.dataset.blocks);
+  });
+
+  // Compatibility for older callers; the top tools no longer exist.
+  function closeWordlist() {}
+
+  /* ---------- toast ---------- */  /* ---------- toast ---------- */
+  /* ---------- toast ---------- */
+  let toastTimer = null;
+  function toast(message) {
+    const el = $("#toast");
+    if (!el) return;
+    el.textContent = message;
+    el.classList.add("is-show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      el.classList.remove("is-show");
+    }, 2600);
+  }
+
+  /* ---------- hover preview card (mouse only) ---------- */
+  let hoverEl = null;
+  let hoverTimer = null;
+
+  function ensureHoverCard() {
+    if (hoverEl) return hoverEl;
+    hoverEl = document.createElement("div");
+    hoverEl.className = "hovercard";
+    hoverEl.hidden = true;
+    document.body.appendChild(hoverEl);
+    return hoverEl;
+  }
+
+  function hideHoverCard() {
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+      hoverTimer = null;
+    }
+    if (!hoverEl) return;
+    hoverEl.hidden = true;
+    hoverEl.innerHTML = "";
+  }
+
+  function showHoverCard(target, html) {
+    const el = ensureHoverCard();
+    if (hoverTimer) clearTimeout(hoverTimer);
+    el.innerHTML = html;
+    el.hidden = false;
+
+    const rect = target.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    const gap = 10;
+    let left = rect.left + rect.width / 2 - box.width / 2;
+    left = Math.max(12, Math.min(window.innerWidth - box.width - 12, left));
+    let top = rect.bottom + gap;
+    if (top + box.height > window.innerHeight - 12) {
+      top = rect.top - box.height - gap;
+    }
+    top = Math.max(12, Math.min(window.innerHeight - box.height - 12, top));
+    el.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+  }
+
+  function vocabPreview(v) {
+    return `<div class="h-word">${esc(v.word)}</div>
+      <div class="h-meta">${esc(v.ipa || "")} ${v.pos ? " · " + esc(v.pos) : ""}</div>
+      <div class="h-meaning">${esc(v.meaning || "")}</div>
+      <div class="h-hint">点按查看搭配与例句</div>`;
+  }
+
+  function complexPreview(c) {
+    return `<div class="h-eyebrow">长难句</div>
+      <div class="h-main">${esc(c.main || "")}</div>
+      <div class="h-trans">${esc(c.translation || "")}</div>
+      <div class="h-hint">点按查看分层结构</div>`;
+  }
+
+  /* ---------- drawer ---------- */
+  const drawer = $("#drawer");
+  const drawerBackdrop = $("#drawerBackdrop");
+  const drawerClose = $("#drawerClose");
+  const drawerTitle = $("#drawerTitle");
+  const drawerEyebrow = $("#drawerEyebrow");
+  const drawerBody = $("#drawerBody");
+  let lastFocus = null;
+  let drawerHideTimer = null;
+
+  function openDrawer({ eyebrow, title, body }) {
+    if (!drawer) return;
+    lastFocus = document.activeElement;
+    if (drawerHideTimer) {
+      clearTimeout(drawerHideTimer);
+      drawerHideTimer = null;
+    }
+    drawerEyebrow.textContent = eyebrow || "详情";
+    drawerTitle.textContent = title || "—";
+    drawerBody.innerHTML = body || "";
+    drawerBody.scrollTop = 0;
+    drawer.hidden = false;
+    drawerBackdrop.hidden = false;
+    drawer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("drawer-open");
+    requestAnimationFrame(() => {
+      drawer.classList.add("is-open");
+      drawerBackdrop.classList.add("is-open");
+      if (drawerClose) drawerClose.focus({ preventScroll: true });
+    });
+    hideHoverCard();
+  }
+
+  function closeDrawer() {
+    if (!drawer || !drawer.classList.contains("is-open")) return;
+    drawer.classList.remove("is-open");
+    drawerBackdrop.classList.remove("is-open");
+    drawer.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("drawer-open");
+    drawerHideTimer = setTimeout(() => {
+      drawer.hidden = true;
+      drawerBackdrop.hidden = true;
+    }, 240);
+    if (lastFocus && typeof lastFocus.focus === "function") {
+      lastFocus.focus({ preventScroll: true });
+    }
+  }
+
+  function drawerFocusables() {
+    if (!drawer) return [];
+    return $$('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])', drawer)
+      .filter((el) => !el.disabled && el.offsetParent !== null);
+  }
+
+  function trapDrawerFocus(e) {
+    if (e.key !== "Tab" || !drawer || !drawer.classList.contains("is-open")) return;
+    const list = drawerFocusables();
+    if (!list.length) return;
+    const first = list[0];
+    const last = list[list.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  function vocabDrawer(id) {
+    const v = vocabMap.get(id);
+    if (!v) return;
+    const level = v.level === "beyond" ? "超纲 / 拓展" : "高考核心";
+    const sec = sectionMap.get(state.section);
+    const w = String(v.word || "").toLowerCase();
+    const relatedPoints = ((sec && sec.examPoints) || []).filter((p) =>
+      (p.words || []).some((x) => x.toLowerCase().includes(w) || w.includes(x.toLowerCase()))
+    );
+    const examHtml = relatedPoints.length
+      ? `<div class="drawer-section-title">高考考点</div>` + relatedPoints.map((p) =>
+          `<div class="drawer-exam"><div class="exam-kicker">${esc(p.kind || "高频考点")}</div><div class="exam-title">${esc(p.title || "")}</div><p class="exam-analysis">${esc(p.analysis || "")}</p></div>`
+        ).join("")
+      : "";
+    const body = `
+      <div class="vocab-ipa">${esc(v.ipa || "")}${v.pos ? " · " + esc(v.pos) : ""}</div>
+      <div class="vocab-meaning">${esc(v.meaning || "")}</div>
+      <div class="vocab-grid">
+        <div class="vocab-cell"><span class="k">常见搭配</span><span class="v">${esc(v.collocation || "—")}</span></div>
+        <div class="vocab-cell"><span class="k">难度标记</span><span class="v">${esc(level)}</span></div>
+      </div>
+      <div class="drawer-section-title">例句</div>
+      <div class="drawer-trans">${esc(v.example || "—")}</div>
+      <div class="drawer-section-title">本文语境</div>
+      <blockquote class="drawer-quote">${esc(v.context || "")}</blockquote>
+      ${examHtml}
+    `;
+    openDrawer({ eyebrow: "VOCABULARY / 词汇", title: v.word, body });
+  }
+
+  function complexDrawer(id) {
+    const c = complexMap.get(id);
+    if (!c) return;
+    const layers = (c.layers || []).map((x) => `<li>${esc(x)}</li>`).join("");
+    const body = `
+      <blockquote class="drawer-quote">${esc(c.quote || "")}</blockquote>
+      <div class="drawer-section-title">主句骨架</div>
+      <div class="complex-main">${esc(c.main || "")}</div>
+      <div class="drawer-section-title">结构层次</div>
+      <ul class="layer-list">${layers}</ul>
+      <div class="drawer-section-title">参考翻译</div>
+      <div class="drawer-trans">${esc(c.translation || "")}</div>
+      ${c.note ? `<div class="drawer-section-title">提示</div><div class="drawer-trans">${esc(c.note)}</div>` : ""}
+    `;
+    openDrawer({ eyebrow: "SENTENCE / 长难句", title: "结构分析", body });
+  }
+
+  /* ---------- legend help tooltip ---------- */
+  const legendHelp = document.querySelector(".legend-help");
+  if (legendHelp) {
+    legendHelp.addEventListener("click", (event) => {
+      event.stopPropagation();
+      legendHelp.classList.toggle("is-open");
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (!legendHelp.contains(event.target)) legendHelp.classList.remove("is-open");
+    });
+  }
+
+  /* ---------- interaction wiring ---------- */
+
+  // Section picker (single dropdown at the top)
+  const sectionSelect = document.getElementById("sectionSelect");
+  if (sectionSelect) {
+    sectionSelect.addEventListener("change", () => {
+      showSection(sectionSelect.value);
+      closeDrawer();
+    });
+  }
+
+  // Question chips
+  $$(".q-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const entry = questionMap.get(String(chip.dataset.qjump));
+      if (!entry) return;
+      activate(entry.q.id, "", { scrollCard: true, scrollEvidence: true });
+      closeDrawer();
+    });
+  });
+
+  // Options (reading / cloze)
+  $$(".option").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      activate(btn.dataset.q, btn.dataset.opt, { scrollCard: false, scrollEvidence: true });
+    });
+
+    btn.addEventListener("pointerenter", (e) => {
+      if (e.pointerType !== "mouse") return;
+      const card = btn.closest(".q-card");
+      if (!card || card.dataset.q !== state.qid) return;
+      applyHighlight(btn.dataset.q, btn.dataset.opt);
+    });
+    btn.addEventListener("pointerleave", () => {
+      applyHighlight(state.qid, state.opt);
+    });
+  });
+
+  // Question cards: clicking anywhere that is not an interactive child pins the answer
+  $$(".q-card").forEach((card) => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest("button, .vocab, .cx, .cx-mark, .link-chip, .gap")) return;
+      const entry = questionMap.get(String(card.dataset.q));
+      if (!entry) return;
+      activate(entry.q.id, "", { scrollCard: false, scrollEvidence: true });
+    });
+  });
+
+  // Bilingual passage toggle
+  $$(".lang-toggle").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const pane = btn.closest(".pane");
+      const body = pane ? pane.querySelector(".passage-body") : null;
+      if (!body) return;
+      const on = !body.classList.contains("is-bilingual");
+      body.classList.toggle("is-bilingual", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.textContent = on ? "中英" : "仅英文";
+    });
+  });
+
+  // Per-question answer reveal
+  $$(".q-reveal").forEach((btn) => {
+    btn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const qid = btn.dataset.reveal;
+      const card = btn.closest(".q-card");
+      const entry = questionMap.get(String(qid));
+      if (!card || !entry) return;
+      const on = !card.classList.contains("is-revealed");
+      card.classList.toggle("is-revealed", on);
+      btn.setAttribute("aria-expanded", on ? "true" : "false");
+      btn.textContent = on ? "隐藏答案" : "显示答案";
+      if (on) {
+        const selected = card.querySelector(".option.is-active")?.dataset.opt;
+        activate(qid, selected || entry.q.answer, {
+          scrollCard: false,
+          scrollEvidence: false,
+          animateEvidence: true,
+        });
+        scrollEvidenceIntoView(() => playEvidenceWipe(qid));
+      } else {
+        activate(qid, "", { scrollCard: false, scrollEvidence: false });
+      }
+    });
+  });
+
+  // Gaps
+  $$(".gap").forEach((gap) => {
+    gap.addEventListener("click", () => {
+      const entry = questionMap.get(String(gap.dataset.gap));
+      if (!entry) return;
+      const hasOption = (entry.q.options || []).some((o) => String(o.key) === String(entry.q.answer));
+      const bankHas = entry.section.kind === "seven";
+      const opt = hasOption || bankHas ? entry.q.answer : "";
+      activate(entry.q.id, opt, { scrollCard: true, scrollEvidence: true });
+    });
+  });
+
+  // Link chips
+  $$(".link-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      activate(chip.dataset.q, chip.dataset.opt, { scrollCard: false, scrollEvidence: true });
+    });
+  });
+
+  // Vocabulary / complex sentence: mouse hover preview + click drawer
+  $$(".vocab").forEach((el) => {
+    const id = el.dataset.vocab;
+    el.addEventListener("pointerenter", (e) => {
+      if (e.pointerType !== "mouse") return;
+      const v = vocabMap.get(id);
+      if (v) showHoverCard(el, vocabPreview(v));
+    });
+    el.addEventListener("pointerleave", () => hideHoverCard());
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      hideHoverCard();
+      vocabDrawer(id);
+    });
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        hideHoverCard();
+        vocabDrawer(id);
+      }
+    });
+  });
+
+  $$(".vocab-row").forEach((row) => {
+    row.addEventListener("click", (event) => {
+      event.stopPropagation();
+      hideHoverCard();
+      closeWordlist(false);
+      vocabDrawer(row.dataset.vocab);
+    });
+  });
+
+  $$(".cx, .cx-mark").forEach((el) => {
+    const id = el.dataset.complex;
+    el.addEventListener("pointerenter", (e) => {
+      if (e.pointerType !== "mouse") return;
+      const c = complexMap.get(id);
+      if (c) showHoverCard(el, complexPreview(c));
+    });
+    el.addEventListener("pointerleave", () => hideHoverCard());
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      hideHoverCard();
+      complexDrawer(id);
+    });
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        hideHoverCard();
+        complexDrawer(id);
+      }
+    });
+  });
+
+  // Drawer close
+  if (drawerClose) drawerClose.addEventListener("click", closeDrawer);
+  if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hideHoverCard();
+      closeWordlist(false);
+      closeDrawer();
+    }
+    trapDrawerFocus(e);
+  });
+  window.addEventListener("scroll", hideHoverCard, { passive: true });
+  $$(".pane").forEach((pane) => {
+    pane.addEventListener("scroll", hideHoverCard, { passive: true });
+  });
+
+  // Font size
+  const fontButtons = $$(".seg-btn[data-size]");
+  function setFontSize(size) {
+    const allowed = ["normal", "large", "xlarge"];
+    const value = allowed.includes(size) ? size : "normal";
+    document.documentElement.dataset.size = value;
+    fontButtons.forEach((b) => {
+      b.setAttribute("aria-pressed", b.dataset.size === value ? "true" : "false");
+    });
+    try {
+      localStorage.setItem("exam-font-size", value);
+    } catch (_) { /* ignore file:// storage restrictions */ }
+  }
+  fontButtons.forEach((b) => {
+    b.addEventListener("click", () => setFontSize(b.dataset.size));
+  });
+  try {
+    const saved = localStorage.getItem("exam-font-size");
+    if (saved) setFontSize(saved);
+  } catch (_) { /* ignore */ }
+
+  // Fullscreen
+  const fullscreenBtn = $("#fullscreenBtn");
+  function updateFullscreenBtn() {
+    if (!fullscreenBtn) return;
+    const on = Boolean(document.fullscreenElement);
+    fullscreenBtn.textContent = on ? "退出全屏" : "全屏";
+    fullscreenBtn.classList.toggle("is-on", on);
+  }
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener("click", async () => {
+      try {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        } else {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (err) {
+        toast("当前环境不允许全屏，请按 F11。");
+      }
+    });
+  }
+  document.addEventListener("fullscreenchange", updateFullscreenBtn);
+
+  // Reset
+  const resetBtn = $("#resetBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      const section = sectionMap.get(state.section);
+      const first = section && section.questions && section.questions[0];
+      if (first) {
+        activate(first.id, "", { scrollCard: true, scrollEvidence: false });
+        toast("已回到本节第一题。");
+      }
+      closeDrawer();
+    });
+  }
+
+  // Collapsed rails + splitter
+  $$(".collapsed-rail").forEach((rail) => {
+    rail.addEventListener("click", () => expandWorkspaceSide());
+  });
+  initSplitters();
+  applyWorkspaceState();
+
+  // Initial section
+  const hash = (location.hash || "").replace(/^#\/?/, "");
+  const initial = sectionMap.has(hash) ? hash : sections[0].id;
+  showSection(initial);
+  closeWordlist(false);
+  // If an old-style "#reading-a" link is opened, the browser may have scrolled
+  // the section into view before the app boots.  Put the chrome back in view.
+  window.scrollTo(0, 0);
+
+  window.addEventListener("hashchange", () => {
+    const id = (location.hash || "").replace(/^#\/?/, "");
+    if (sectionMap.has(id) && id !== state.section) showSection(id);
+  });
+
+  window.addEventListener("resize", hideHoverCard);
+})();
+
+  </script>
+</body>
+</html>

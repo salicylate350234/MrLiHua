@@ -1,0 +1,21 @@
+# Real exam packs and generated outputs stay local.
+data/*.json
+output/*.html
+
+# Generated / local build artifacts
+__pycache__/
+*.py[cod]
+*.log
+.DS_Store
+Thumbs.db
+.venv/
+venv/
+
+# Local environment / editor
+.env
+.vscode/
+.idea/
+
+# Keep the public synthetic demo
+!examples/demo/*.json
+!examples/demo/*.html

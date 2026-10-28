@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN" data-size="normal">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#faf9f5">
+  <title>{{TITLE}}</title>
+  <style>
+{{CSS}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+    <div class="section-context" id="sectionContext" aria-live="polite">
+      <div class="context-title" id="contextTitle">{{CONTEXT_TITLE}}</div>
+      <div class="context-meta" id="contextMeta">{{CONTEXT_META}}</div>
+    </div>
+
+    <div class="section-picker">
+      <label class="sr-only" for="sectionSelect">选择题型</label>
+      <div class="select-wrap">
+        <select id="sectionSelect" class="section-select" aria-label="选择题型">
+          {{SELECT}}
+        </select>
+      </div>
+    </div>
+    </div>
+
+    <div class="topbar-legend">
+      <div class="legend" aria-label="图例">
+        <span class="legend-item"><i class="swatch swatch-ev"></i>答案依据</span>
+        <span class="legend-item"><i class="swatch swatch-key">[ ]</i>关键词</span>
+        <span class="legend-item"><i class="swatch swatch-gap"></i>空格</span>
+        <span class="legend-item"><i class="swatch swatch-vocab"></i>生词</span>
+        <span class="legend-item"><i class="swatch swatch-cx">析</i>长难句</span>
+        <button class="legend-help" type="button" aria-label="操作提示" title="点按虚线词看释义 · 点按“析”看结构" data-tip="点按虚线词看释义 · 点按“析”看结构">?</button>
+      </div>
+    </div>
+
+    <div class="topbar-actions" role="group" aria-label="页面控制">
+      <div class="seg" role="group" aria-label="字号">
+        <button class="seg-btn" type="button" data-size="normal" aria-pressed="true">标准</button>
+        <button class="seg-btn" type="button" data-size="large" aria-pressed="false">大</button>
+        <button class="seg-btn" type="button" data-size="xlarge" aria-pressed="false">特大</button>
+      </div>
+      <button class="icon-btn" type="button" id="fullscreenBtn" aria-label="全屏">全屏</button>
+      <button class="icon-btn" type="button" id="resetBtn" aria-label="重置高亮">重置</button>
+    </div>
+  </header>
+
+  <main id="app">
+    {{SECTIONS}}
+  </main>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" aria-hidden="true">
+    <div class="drawer-head">
+      <div>
+        <div class="drawer-eyebrow" id="drawerEyebrow">词汇</div>
+        <h2 class="drawer-title" id="drawerTitle">—</h2>
+      </div>
+      <button class="drawer-close" type="button" id="drawerClose" aria-label="关闭详情">关闭</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="application/json" id="examData">{{JSON}}</script>
+  <script>
+{{JS}}
+  </script>
+</body>
+</html>
