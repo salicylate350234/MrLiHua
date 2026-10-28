@@ -6,7 +6,7 @@
 
 一个面向高中英语课堂的 DSH Skill：阅读 A–D、七选五、完形填空、语法填空，最终生成一个无需后端、无需联网的单文件 HTML。
 
-`v0.2.0` · `Windows 10 + Edge` · `4K touch-first` · `MIT`
+`v1.0.0` · `Windows 10 + Edge` · `4K touch-first` · `MIT`
 
 </div>
 
@@ -152,6 +152,10 @@ python scripts/prepare_images.py .\photos --rotate --split --trim
 ## 许可
 
 [MIT](LICENSE) © 2026 salicylate350234（MrLiHua / 李华同学）
+
+## 版本记录
+
+见 [CHANGELOG.md](CHANGELOG.md)。当前版本：**v1.0.0**。
 
 ## 联系
 
