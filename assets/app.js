@@ -628,6 +628,14 @@
   function vocabDrawer(id) {
     const v = vocabMap.get(id);
     if (!v) return;
+    const labels = {
+      core: "核心高频",
+      polysemy: "熟词生义",
+      synonym: "同义替换",
+      phrase: "短语搭配",
+      derivation: "词性转换",
+    };
+    const cat = v.category && labels[v.category] ? v.category : "core";
     const level = v.level === "beyond" ? "超纲 / 拓展" : "高考核心";
     const sec = sectionMap.get(state.section);
     const w = String(v.word || "").toLowerCase();
@@ -635,19 +643,35 @@
       (p.words || []).some((x) => x.toLowerCase().includes(w) || w.includes(x.toLowerCase()))
     );
     const examHtml = relatedPoints.length
-      ? `<div class="drawer-section-title">高考考点</div>` + relatedPoints.map((p) =>
+      ? `<div class="drawer-section-title">本节相关考点</div>` + relatedPoints.map((p) =>
           `<div class="drawer-exam"><div class="exam-kicker">${esc(p.kind || "高频考点")}</div><div class="exam-title">${esc(p.title || "")}</div><p class="exam-analysis">${esc(p.analysis || "")}</p></div>`
         ).join("")
       : "";
+    const replace = String(v.replace || "").trim();
+    const synonyms = String(v.synonyms || "").trim();
+    const synHtml = (replace || synonyms)
+      ? `<div class="drawer-section-title">同义替换</div><div class="drawer-trans">${replace ? `= ${esc(replace)}` : ""}${replace && synonyms ? " · " : ""}${esc(synonyms)}</div>`
+      : "";
+    const derivHtml = v.derivation
+      ? `<div class="drawer-section-title">词性转换</div><div class="drawer-trans">${esc(v.derivation)}</div>`
+      : "";
+    const examPointHtml = v.examPoint
+      ? `<div class="drawer-section-title">高考考点</div><div class="drawer-trans">${esc(v.examPoint)}</div>`
+      : "";
     const body = `
+      <div class="vocab-cat tag-${cat}">${labels[cat]}</div>
       <div class="vocab-ipa">${esc(v.ipa || "")}${v.pos ? " · " + esc(v.pos) : ""}</div>
       <div class="vocab-meaning">${esc(v.meaning || "")}</div>
       <div class="vocab-grid">
         <div class="vocab-cell"><span class="k">常见搭配</span><span class="v">${esc(v.collocation || "—")}</span></div>
         <div class="vocab-cell"><span class="k">难度标记</span><span class="v">${esc(level)}</span></div>
       </div>
+      ${examPointHtml}
+      ${synHtml}
+      ${derivHtml}
       <div class="drawer-section-title">例句</div>
       <div class="drawer-trans">${esc(v.example || "—")}</div>
+      ${v.exampleZh ? `<div class="drawer-example-zh">${esc(v.exampleZh)}</div>` : ""}
       <div class="drawer-section-title">本文语境</div>
       <blockquote class="drawer-quote">${esc(v.context || "")}</blockquote>
       ${examHtml}

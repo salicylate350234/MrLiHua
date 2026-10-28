@@ -1541,6 +1541,7 @@ body.is-splitting * { cursor: col-resize !important; }
   .main-grid { grid-template-columns: 1fr; }
 }
 .analysis-body {
+  container-type: inline-size;
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
@@ -1576,6 +1577,55 @@ body.is-splitting * { cursor: col-resize !important; }
   padding: 0;
 }
 .vocab-list.tab-vocab-list .vocab-row { align-content: center; }
+
+.vw-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 750;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.tag-core { background: #f2dfb2; color: #7a4e0b; }
+.tag-polysemy { background: #d8e5f5; color: #254a74; }
+.tag-synonym { background: #d9efe1; color: #245d41; }
+.tag-phrase { background: #e8ddf4; color: #563f78; }
+.tag-derivation { background: #f1e2f0; color: #703f68; }
+.vw-eq { color: #2f6b4f; font-weight: 700; }
+.vocab-row.cat-core { background: #fffaf0; border-color: #f0e1c2; }
+.vocab-row.cat-polysemy { background: #f7faff; border-color: #dbe6f4; }
+.vocab-row.cat-synonym { background: #f5fbf7; border-color: #d7ebde; }
+.vocab-row.cat-phrase { background: #fbf8fe; border-color: #e6dbf3; }
+.vocab-row.cat-derivation { background: #fdf7fb; border-color: #efdce9; }
+
+@container (min-width: 520px) {
+  .vocab-list.tab-vocab-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container (min-width: 980px) {
+  .vocab-list.tab-vocab-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(56px, 132px);
+    align-content: start;
+  }
+}
+
+.vocab-cat {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.48rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 750;
+}
+.drawer-example-zh {
+  margin-top: 0.18rem;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
 
 /* word list panel in the analysis column */
 .vocab-panel {

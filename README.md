@@ -6,13 +6,24 @@
 
 一个面向高中英语课堂的 DSH Skill：阅读 A–D、七选五、完形填空、语法填空，最终生成一个无需后端、无需联网的单文件 HTML。
 
-`v0.1.0` · `Windows 10 + Edge` · `4K touch-first` · `MIT`
+`v0.2.0` · `Windows 10 + Edge` · `4K touch-first` · `MIT`
 
 </div>
 
 ![MrLiHua 交互解析界面（合成演示）](docs/screenshot-1920.png)
 
 > 截图使用仓库自带的**合成演示**，不含任何真实试卷、学校或学生数据。
+
+### 词汇：12 个/篇，五类胶囊标签
+
+![词汇分类与多列布局（合成演示）](docs/screenshot-vocab-1920.png)
+
+- **核心高频**：高考 3500 重点实词（琥珀色）
+- **熟词生义**：reserve、present、plain 等“认识但考偏”的词（深蓝色）
+- **同义替换**：明确写出可替换词，如 `reserve = book`（翠绿色）
+- **短语搭配**：be subject to、follow through、first come first serve（紫色）
+- **词性转换**：confirm → confirmation、pollinate → pollinators（紫罗兰）
+- 右栏宽度变化时自动 1 / 2 / 3 列；点词查看考点、替换词、派生链、例句与例句翻译。
 
 ---
 
@@ -41,6 +52,7 @@ MrLiHua 不是一个在线刷题网站，而是一条“试卷 → 结构化数�
 | 中英对照 | 逐段中文；关键句 / 证据句附翻译；可切“仅英文” |
 | 长难句 | 主干、层次、指代、翻译，点击“析”打开抽屉 |
 | 课堂工具 | 解析 / 词汇 / 结构 / 考点四个下划线标签页 |
+| 词汇分类 | 12 个/篇；五类胶囊标签；1/2/3 列自适应；考点 / 同义替换 / 派生 / 例句翻译 |
 | 4K 触摸 | 大字号、宽间距、双行顶部信息、48–56px 控件 |
 | 数据校验 | 引文、题号、选项、答案、词汇锚点构建前校验 |
 
@@ -107,7 +119,9 @@ python scripts/prepare_images.py .\photos --rotate --split --trim
 ├─ templates/shell.html      # HTML 外壳
 ├─ references/               # schema / analysis / extraction / design
 ├─ examples/demo/            # 合成演示（可公开）
-└─ docs/screenshot-1920.png  # 合成演示截图
+└─ docs/
+   ├─ screenshot-1920.png    # 解析界面
+   └─ screenshot-vocab-1920.png  # 词汇分类界面
 ```
 
 ## 本机接口与隐私

@@ -191,7 +191,10 @@
           "collocation": "a raised bed",
           "example": "The herbs grow in a raised bed.",
           "level": "core",
-          "wordlist": true
+          "wordlist": true,
+          "category": "core",
+          "examPoint": "raised bed = 高出地面的种植箱；raise 的过去分词作定语。",
+          "exampleZh": "香草种在高出地面的种植箱里。"
         },
         {
           "id": "v2",
@@ -204,20 +207,10 @@
           "collocation": "rich soil / test the soil",
           "example": "The soil here is dark and rich.",
           "level": "core",
-          "wordlist": true
-        },
-        {
-          "id": "v3",
-          "word": "harvest",
-          "block": "D-p4",
-          "context": "the biggest harvest",
-          "ipa": "/ˈhɑːvɪst/",
-          "pos": "n.",
-          "meaning": "收获；收成",
-          "collocation": "a good harvest",
-          "example": "The farmers expect a good harvest.",
-          "level": "core",
-          "wordlist": true
+          "wordlist": true,
+          "category": "core",
+          "examPoint": "soil = 土壤；test the soil 检测土壤。",
+          "exampleZh": "这里的土壤颜色深、养分足。"
         },
         {
           "id": "v4",
@@ -230,7 +223,10 @@
           "collocation": "homemade bread",
           "example": "She brought homemade cookies.",
           "level": "core",
-          "wordlist": true
+          "wordlist": true,
+          "category": "core",
+          "examPoint": "homemade = 自制的；复合形容词。",
+          "exampleZh": "她带来了自制饼干。"
         },
         {
           "id": "v5",
@@ -243,7 +239,26 @@
           "collocation": "make compost",
           "example": "They turn food waste into compost.",
           "level": "core",
-          "wordlist": true
+          "wordlist": true,
+          "category": "core",
+          "examPoint": "compost = 堆肥；compost bin 堆肥箱。",
+          "exampleZh": "他们把厨余变成堆肥。"
+        },
+        {
+          "id": "v3",
+          "word": "harvest",
+          "block": "D-p4",
+          "context": "the biggest harvest",
+          "ipa": "/ˈhɑːvɪst/",
+          "pos": "n.",
+          "meaning": "收获；收成",
+          "collocation": "a good harvest",
+          "example": "The farmers expect a good harvest.",
+          "level": "core",
+          "wordlist": true,
+          "category": "polysemy",
+          "examPoint": "harvest 可作名词“收成”，也可作动词“收割”；本文是名词。",
+          "exampleZh": "农民们期待好收成。"
         },
         {
           "id": "v6",
@@ -255,6 +270,74 @@
           "meaning": "注意到；察觉",
           "collocation": "notice the difference",
           "example": "Did you notice the change?",
+          "level": "core",
+          "wordlist": true,
+          "category": "synonym",
+          "examPoint": "notice = observe；注意到、察觉到。",
+          "exampleZh": "你注意到变化了吗？",
+          "replace": "observe"
+        },
+        {
+          "id": "v-demo-new1",
+          "word": "Garden Club",
+          "block": "D-h1",
+          "context": "Garden Club",
+          "ipa": "",
+          "pos": "phrase",
+          "meaning": "花园社团",
+          "collocation": "join a club",
+          "example": "She joined the garden club.",
+          "exampleZh": "她加入了花园社团。",
+          "category": "phrase",
+          "examPoint": "garden club = 花园社团；club 可指社团。",
+          "level": "core",
+          "wordlist": true
+        },
+        {
+          "id": "v-demo-new2",
+          "word": "seed packets",
+          "block": "D-p3",
+          "context": "homemade seed packets",
+          "ipa": "",
+          "pos": "phrase",
+          "meaning": "种子包",
+          "collocation": "a packet of seeds",
+          "example": "They sold homemade seed packets.",
+          "exampleZh": "他们出售自制种子包。",
+          "category": "phrase",
+          "examPoint": "seed packet = 种子包；packet 指小包装。",
+          "level": "core",
+          "wordlist": true
+        },
+        {
+          "id": "v-demo-new3",
+          "word": "compost bin",
+          "block": "D-p4",
+          "context": "a compost bin",
+          "ipa": "",
+          "pos": "phrase",
+          "meaning": "堆肥箱",
+          "collocation": "build a compost bin",
+          "example": "They built a compost bin.",
+          "exampleZh": "他们建了一个堆肥箱。",
+          "category": "phrase",
+          "examPoint": "compost bin = 堆肥箱；compost 指堆肥。",
+          "level": "core",
+          "wordlist": true
+        },
+        {
+          "id": "v-demo-new4",
+          "word": "science lab",
+          "block": "D-p3",
+          "context": "the school's science lab",
+          "ipa": "",
+          "pos": "phrase",
+          "meaning": "科学实验室",
+          "collocation": "in the science lab",
+          "example": "The tools are for the science lab.",
+          "exampleZh": "这些工具是给科学实验室的。",
+          "category": "phrase",
+          "examPoint": "science lab = 科学实验室；lab 是 laboratory 的缩写。",
           "level": "core",
           "wordlist": true
         },
@@ -269,7 +352,11 @@
           "collocation": "the connection between A and B",
           "example": "She explained the connection between diet and health.",
           "level": "core",
-          "wordlist": true
+          "wordlist": true,
+          "category": "derivation",
+          "examPoint": "connect → connection；connections between A and B。",
+          "exampleZh": "她解释了饮食与健康之间的联系。",
+          "derivation": "connect → connection"
         },
         {
           "id": "v8",
@@ -282,7 +369,11 @@
           "collocation": "plant growth",
           "example": "Sunlight is necessary for growth.",
           "level": "core",
-          "wordlist": true
+          "wordlist": true,
+          "category": "derivation",
+          "examPoint": "grow → growth；plant growth。",
+          "exampleZh": "阳光对生长是必要的。",
+          "derivation": "grow → growth"
         }
       ],
       "complex": [

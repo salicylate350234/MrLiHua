@@ -249,6 +249,9 @@ Section 可以带两份课堂数据：
   "meaning": "温带的；气候温和的",
   "collocation": "temperate climate / temperate zone",
   "example": "These plants grow well in a temperate climate.",
+  "exampleZh": "这些植物在温带气候中长得好。",
+  "category": "core",
+  "examPoint": "高考高频实词；temperate 既指气候温和，也可指态度温和。",
   "level": "core",
   "wordlist": true
 }
@@ -257,9 +260,13 @@ Section 可以带两份课堂数据：
 - `context` 必须是原文精确子串；
 - `word` 必须在 `context` 中；
 - `level`：`core`（高考 3500 基线）或 `beyond`（超纲/拓展）；
-- `wordlist`（可选）：`true` 表示进入顶部全卷单词清单；`false` 表示只做行内注释、不进清单；
-- 顶部全局单词清单优先读取 `wordlist: true` 且 `level: core` 的词；如果没有 `wordlist` 字段，才回退到 `core` 并排除低频专有/技术词；
-- 每篇 8–12 个，不要把所有生词都标上。
+- `wordlist`：`true` 表示进入当前篇词汇表；`false` 表示只做行内注释；
+- `category`：`core` / `polysemy` / `synonym` / `phrase` / `derivation`；
+- `examPoint`：点开单词后显示的高考考点；
+- `exampleZh`：例句中文翻译；
+- `replace` / `synonyms`：同义替换词，例如 `reserve` 的 `replace: "book"`；
+- `derivation`：词性转换链，例如 `confirm → confirmation`；
+- 每篇 12 个，五类至少覆盖三类，不要把所有生词都标上。
 
 ## Complex sentence
 

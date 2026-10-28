@@ -36,6 +36,14 @@ SELECT_LABEL = {
     "cloze": "完形填空",
     "grammar": "语法填空",
 }
+VOCAB_TAGS = {
+    "core": "核心高频",
+    "polysemy": "熟词生义",
+    "synonym": "同义替换",
+    "phrase": "短语搭配",
+    "derivation": "词性转换",
+}
+
 WORDLIST_SECTION = {
     "reading-a": "阅读A",
     "reading-b": "阅读B",
@@ -605,23 +613,34 @@ def build_vocab_tab(sec: dict) -> str:
         if v.get("level") == "core" and v.get("wordlist") is not False
     ]
     rows = []
+    counts = {}
     for v in vocab:
+        cat = v.get("category", "core")
+        if cat not in VOCAB_TAGS:
+            cat = "core"
+        counts[cat] = counts.get(cat, 0) + 1
+        replace = str(v.get("replace") or "").strip()
+        meaning = esc(v.get("meaning", ""))
+        if replace:
+            meaning += f' <span class="vw-eq">= {esc(replace)}</span>'
         rows.append(
-            f'<button class="vocab-row" type="button" data-vocab="{attr(v.get("id", ""))}" '
-            f'aria-label="查看 {attr(v.get("word", ""))} 的音标、词性和释义">'
+            f'<button class="vocab-row cat-{cat}" type="button" data-vocab="{attr(v.get("id", ""))}" '
+            f'aria-label="查看 {attr(v.get("word", ""))} 的考点、搭配和例句">'
             f'<span class="vw-main"><span class="vw-word">{esc(v.get("word", ""))}</span>'
             f'<span class="vw-ipa">{esc(v.get("ipa", ""))}</span>'
             f'<span class="vw-pos">{esc(v.get("pos", ""))}</span></span>'
-            f'<span class="vw-meaning">{esc(v.get("meaning", ""))}</span>'
-            f'<span class="vw-q">高频</span></button>'
+            f'<span class="vw-meaning">{meaning}</span>'
+            f'<span class="vw-tag tag-{cat}">{VOCAB_TAGS[cat]}</span></button>'
         )
     if not rows:
         return '<div class="tab-empty">本篇暂无词汇表。</div>'
+    summary = " · ".join(f"{VOCAB_TAGS[k]} {counts[k]}" for k in VOCAB_TAGS if counts.get(k))
     return f"""
 <div class="tab-head">
   <div>
     <div class="drawer-eyebrow">VOCABULARY / 本篇词汇</div>
     <h2 class="tab-title">本篇词汇 <span class="tab-count">{len(rows)} 个</span></h2>
+    <div class="tab-sub">{summary}</div>
   </div>
 </div>
 <div class="vocab-list tab-vocab-list">{''.join(rows)}</div>
