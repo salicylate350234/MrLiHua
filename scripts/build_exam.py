@@ -642,6 +642,7 @@ def build_vocab_tab(sec: dict) -> str:
     <h2 class="tab-title">本篇词汇 <span class="tab-count">{len(rows)} 个</span></h2>
     <div class="tab-sub">{summary}</div>
   </div>
+  <button class="global-vocab-btn" type="button">全卷词库 <span class="global-count">0</span></button>
 </div>
 <div class="vocab-list tab-vocab-list">{''.join(rows)}</div>
 """
@@ -800,6 +801,27 @@ def build_section(sec: dict, idx: int) -> str:
 """
 
 
+# Build-time OCR / match diagnostics must never leak into a delivery artifact.
+DELIVERY_DROP_KEYS = {
+    "match", "matches", "matchScore", "match_report", "matchReport",
+    "ocr", "ocrConfidence", "ocrLines", "ocrQuestion", "ocrReport",
+    "confidence", "report",
+}
+
+
+def strip_internal(value):
+    """Return a delivery-safe copy with OCR/match diagnostics removed."""
+    if isinstance(value, dict):
+        return {
+            key: strip_internal(item)
+            for key, item in value.items()
+            if key not in DELIVERY_DROP_KEYS
+        }
+    if isinstance(value, list):
+        return [strip_internal(item) for item in value]
+    return value
+
+
 def build_nav(data: dict) -> str:
     out = []
     for i, sec in enumerate(data["sections"]):
@@ -824,7 +846,7 @@ def main() -> int:
     ap.add_argument("--js", type=Path, default=ROOT / "assets" / "app.js")
     args = ap.parse_args()
 
-    data = json.loads(args.input.read_text(encoding="utf-8"))
+    data = strip_internal(json.loads(args.input.read_text(encoding="utf-8")))
     errors = validate(data)
     if errors:
         print(f"Refusing to build: {len(errors)} validation error(s)", file=sys.stderr)

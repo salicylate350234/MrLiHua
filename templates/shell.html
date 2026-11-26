@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-size="normal">
+<html lang="zh-CN" data-size="normal" data-device="desktop">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -45,10 +45,32 @@
         <button class="seg-btn" type="button" data-size="large" aria-pressed="false">大</button>
         <button class="seg-btn" type="button" data-size="xlarge" aria-pressed="false">特大</button>
       </div>
+      <button class="icon-btn" type="button" id="presentBtn" aria-pressed="false" aria-label="开始课堂演示">演示</button>
+      <button class="icon-btn" type="button" id="proofBtn" aria-pressed="false" aria-label="开启文本校正">校正</button>
       <button class="icon-btn" type="button" id="fullscreenBtn" aria-label="全屏">全屏</button>
       <button class="icon-btn" type="button" id="resetBtn" aria-label="重置高亮">重置</button>
     </div>
   </header>
+
+  <div class="proof-bar" id="proofBar" hidden>
+    <div class="proof-copy">
+      <strong>文本校正</strong>
+      <span>点击原文、译文、题干或选项直接修改；修改自动保存在本机。</span>
+    </div>
+    <div class="proof-actions">
+      <span class="proof-status" id="proofStatus" role="status">未修改</span>
+      <button class="proof-action" type="button" id="proofExportHtml">下载校正 HTML</button>
+      <button class="proof-action" type="button" id="proofExportJson">导出校正 JSON</button>
+      <button class="proof-action proof-danger" type="button" id="proofClear">清除</button>
+      <button class="proof-action proof-done" type="button" id="proofDone">完成</button>
+    </div>
+  </div>
+
+  <div class="present-blackout" id="presentBlackout" hidden aria-hidden="true">
+    <button class="present-wake" type="button" id="presentWake">恢复演示</button>
+  </div>
+
+  <div class="sr-only" id="presentLive" role="status" aria-live="polite"></div>
 
   <main id="app">
     {{SECTIONS}}

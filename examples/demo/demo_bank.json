@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "source": "Synthetic demo · Reading A",
+  "count": 2,
+  "questions": [
+    {
+      "id": "reading-a-1",
+      "source": "Synthetic demo · Reading A",
+      "section": "reading-a",
+      "sectionLabel": "阅读 A",
+      "number": "1",
+      "stem": "What did the students discover about watering the beds?",
+      "options": {
+        "A": "More water always makes tomatoes sweeter.",
+        "B": "The bed with less water produced sweeter tomatoes.",
+        "C": "Tomatoes grow best without any water.",
+        "D": "Watering the beds made the soil worse."
+      },
+      "answer": "B",
+      "answerSource": "key",
+      "passageHash": "6cb4444177764a41",
+      "topic": "校园花园"
+    },
+    {
+      "id": "reading-a-2",
+      "source": "Synthetic demo · Reading A",
+      "section": "reading-a",
+      "sectionLabel": "阅读 A",
+      "number": "2",
+      "stem": "Why did the club open the market?",
+      "options": {
+        "A": "To sell gardening tools to students.",
+        "B": "To buy seeds for the next spring.",
+        "C": "To raise money for the science lab and share gardening knowledge.",
+        "D": "To build a rain barrel and a compost bin."
+      },
+      "answer": "C",
+      "answerSource": "key",
+      "passageHash": "6cb4444177764a41",
+      "topic": "校园花园"
+    }
+  ]
+}

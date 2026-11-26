@@ -266,7 +266,7 @@ Section 可以带两份课堂数据：
 - `exampleZh`：例句中文翻译；
 - `replace` / `synonyms`：同义替换词，例如 `reserve` 的 `replace: "book"`；
 - `derivation`：词性转换链，例如 `confirm → confirmation`；
-- 每篇 12 个，五类至少覆盖三类，不要把所有生词都标上。
+- 每篇按旧版广度 20–37 个；五类至少覆盖三类；全卷词库约 185 个；不要把所有生词都标上。
 
 ## Complex sentence
 

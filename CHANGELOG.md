@@ -2,6 +2,43 @@
 
 All notable changes to MrLiHua / 李华同学 are documented here.
 
+## [1.1.0] - 2026-11-26
+
+### Presentation
+
+- Added classroom presentation mode: structure → analysis → vocabulary.
+- Structure steps auto-locate and persistently highlight the corresponding passage section.
+- Analysis steps move through questions and automatically reveal each answer.
+- Removed the bottom presentation bar; all common clicker keys (including arrows, Space, Enter, F5, N/P, Home/End and unknown single characters) step next/previous.
+- `B` blacks out the screen; `Esc` closes the drawer / exits blackout / exits presentation.
+- Presentation state is in-memory only; normal browsing keyboard behavior is unchanged.
+
+### Vocabulary
+
+- Restored the original 20–37 words per section (185 total) and added the 185-entry whole-paper library.
+- Preserved the five category tags, 1/2/3-column layout, exam points, synonyms, derivations and example translations.
+
+### OCR / matching
+
+- Added optional local RapidOCR extraction, question-bank building and Top-3 matching.
+- Added a separate review report with match scores; OCR confidence is not displayed.
+- Delivery builds strip OCR/match diagnostics; the report is never embedded in the final HTML.
+
+### Proofreading
+
+- Added inline plain-text correction for passages, translations, question stems, options and evidence.
+- Corrections auto-save locally; users can download a corrected HTML or export a correction JSON.
+
+### Responsive / devices
+
+- Automatic Seewo 4K touch detection with `xlarge` text, standard desktop mode, and automatic mobile single-column mode.
+- Added mobile/landscape layout fixes and no horizontal overflow.
+
+### Delivery
+
+- Final HTML remains single-file, offline, no CDN/backend/network requests.
+- Updated README, SKILL, design and security documentation.
+
 ## [1.0.0] - 2026-10-28
 
 First formal release.

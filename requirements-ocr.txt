@@ -1,0 +1,5 @@
+# Optional OCR dependencies (local / free)
+# Core build only needs Pillow + Python 3.10+.
+rapidocr_onnxruntime>=1.4.4
+Pillow>=10.0
+numpy>=1.24

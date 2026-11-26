@@ -445,6 +445,7 @@
       const btn = event.target.closest(".tab-btn");
       if (!btn) return;
       setTab(btn.dataset.tab, { scroll: true });
+      syncPresentationTab(btn.dataset.tab);
     });
   });
 
@@ -669,14 +670,39 @@
       ${examPointHtml}
       ${synHtml}
       ${derivHtml}
-      <div class="drawer-section-title">例句</div>
-      <div class="drawer-trans">${esc(v.example || "—")}</div>
+      ${v.example ? `<div class="drawer-section-title">例句</div><div class="drawer-trans">${esc(v.example)}</div>` : ""}
       ${v.exampleZh ? `<div class="drawer-example-zh">${esc(v.exampleZh)}</div>` : ""}
-      <div class="drawer-section-title">本文语境</div>
-      <blockquote class="drawer-quote">${esc(v.context || "")}</blockquote>
+      ${v.context ? `<div class="drawer-section-title">本文语境</div><blockquote class="drawer-quote">${esc(v.context)}</blockquote>` : ""}
       ${examHtml}
     `;
     openDrawer({ eyebrow: "VOCABULARY / 词汇", title: v.word, body });
+  }
+
+  function globalVocabDrawer() {
+    const labels = {
+      core: "核心高频",
+      polysemy: "熟词生义",
+      synonym: "同义替换",
+      phrase: "短语搭配",
+      derivation: "词性转换",
+    };
+    let total = 0;
+    let body = `<div class="global-vocab-note">按篇汇总全卷词库；点击任意词条查看考点、搭配与例句。</div>`;
+    for (const sec of sections) {
+      const vs = sec.vocab || [];
+      total += vs.length;
+      body += `<section class="global-vocab-section"><h3>${esc(sec.label || sec.topic || sec.id)} <span>${vs.length}</span></h3><div class="global-vocab-list">`;
+      for (const v of vs) {
+        const cat = v.category && labels[v.category] ? v.category : "core";
+        body += `<button class="global-vocab-row" type="button" data-global-vocab="${esc(v.id)}">` +
+          `<span class="gw">${esc(v.word || "")}</span>` +
+          `<span class="gm">${esc(v.meaning || "")}</span>` +
+          `<span class="vw-tag tag-${cat}">${labels[cat]}</span>` +
+          `</button>`;
+      }
+      body += `</div></section>`;
+    }
+    openDrawer({ eyebrow: "VOCABULARY / 全卷", title: `全卷词库 ${total}`, body });
   }
 
   function complexDrawer(id) {
@@ -710,12 +736,26 @@
 
   /* ---------- interaction wiring ---------- */
 
+  // Global vocabulary library
+  $$(".global-count").forEach((el) => { el.textContent = String(vocabMap.size); });
+  $$(".global-vocab-btn").forEach((btn) => {
+    btn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      globalVocabDrawer();
+    });
+  });
+  document.addEventListener("click", (event) => {
+    const row = event.target.closest("[data-global-vocab]");
+    if (row) vocabDrawer(row.dataset.globalVocab);
+  });
+
   // Section picker (single dropdown at the top)
   const sectionSelect = document.getElementById("sectionSelect");
   if (sectionSelect) {
     sectionSelect.addEventListener("change", () => {
       showSection(sectionSelect.value);
       closeDrawer();
+      if (presentationMode) setPresentationStage(0);
     });
   }
 
@@ -874,6 +914,7 @@
   if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeDrawer);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
+      if (handlePresentationEscape(e)) return;
       hideHoverCard();
       closeWordlist(false);
       closeDrawer();
@@ -887,7 +928,28 @@
 
   // Font size
   const fontButtons = $$(".seg-btn[data-size]");
-  function setFontSize(size) {
+  function detectDevice() {
+    const ua = navigator.userAgent || "";
+    const touch = Number(navigator.maxTouchPoints || 0);
+    const dpr = Number(window.devicePixelRatio || 1);
+    const sw = Number((window.screen && window.screen.width) || window.innerWidth || 0);
+    const sh = Number((window.screen && window.screen.height) || window.innerHeight || 0);
+    const viewportW = Math.max(sw, window.innerWidth || 0);
+    const viewportH = Math.max(sh, window.innerHeight || 0);
+    const physicalW = Math.max(viewportW, viewportH) * dpr;
+    const physicalH = Math.min(viewportW, viewportH) * dpr;
+    const isSeewo = /seewo|希沃/i.test(ua) ||
+      (physicalW >= 3000 && physicalH >= 1600 && touch >= 1);
+    const isPhone = /Android|iPhone|iPod|Mobile|Windows Phone/i.test(ua);
+    const isMobile = !isSeewo && (
+      isPhone ||
+      window.matchMedia("(max-width: 900px)").matches ||
+      (touch > 1 && Math.min(sw, sh) <= 820)
+    );
+    return isSeewo ? "seewo" : (isMobile ? "mobile" : "desktop");
+  }
+
+  function setFontSize(size, manual) {
     const allowed = ["normal", "large", "xlarge"];
     const value = allowed.includes(size) ? size : "normal";
     document.documentElement.dataset.size = value;
@@ -896,15 +958,737 @@
     });
     try {
       localStorage.setItem("exam-font-size", value);
+      if (manual) localStorage.setItem("exam-font-size-manual", "1");
     } catch (_) { /* ignore file:// storage restrictions */ }
   }
+
+  const device = detectDevice();
+  document.documentElement.dataset.device = device;
   fontButtons.forEach((b) => {
-    b.addEventListener("click", () => setFontSize(b.dataset.size));
+    b.addEventListener("click", () => setFontSize(b.dataset.size, true));
   });
   try {
     const saved = localStorage.getItem("exam-font-size");
-    if (saved) setFontSize(saved);
-  } catch (_) { /* ignore */ }
+    const manual = localStorage.getItem("exam-font-size-manual") === "1";
+    const autoSize = device === "seewo" ? "xlarge" : "normal";
+    setFontSize(manual && saved ? saved : autoSize, false);
+  } catch (_) {
+    setFontSize(device === "seewo" ? "xlarge" : "normal", false);
+  }
+
+  // Proofreading mode: edit OCR text in place, save locally, export.
+  const PROOF_KEY = "exam-proof-edits-v1";
+  const PROOF_SELECTOR = [
+    ".passage-body [data-block]",
+    ".passage-body .zh[data-zh-for]",
+    ".q-stem",
+    ".opt-text",
+    ".evidence-quote",
+  ].join(",");
+  let proofMode = false;
+  let proofEdits = {};
+  try {
+    const raw = localStorage.getItem(PROOF_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) proofEdits = parsed;
+  } catch (_) { /* file:// storage may be unavailable */ }
+
+  const proofBtn = $("#proofBtn");
+  const proofBar = $("#proofBar");
+  const proofStatus = $("#proofStatus");
+
+  function proofKeyFor(el) {
+    if (el.dataset.block) return "block:" + el.dataset.block;
+    if (el.dataset.zhFor) return "zh:" + el.dataset.zhFor;
+    const card = el.closest(".q-card");
+    const qid = card && card.dataset.q;
+    if (!qid) return "";
+    if (el.classList.contains("q-stem")) return `q:${qid}:stem`;
+    if (el.classList.contains("opt-text")) {
+      const option = el.closest("[data-opt]");
+      return option ? `q:${qid}:opt:${option.dataset.opt}` : "";
+    }
+    if (el.classList.contains("evidence-quote")) {
+      const all = [...card.querySelectorAll(".evidence-quote")];
+      return `q:${qid}:evidence:${all.indexOf(el) + 1}`;
+    }
+    return "";
+  }
+
+  function collectProofTargets() {
+    const used = new Set();
+    $$(PROOF_SELECTOR).forEach((el) => {
+      let key = proofKeyFor(el);
+      if (!key) return;
+      let finalKey = key;
+      let n = 2;
+      while (used.has(finalKey)) finalKey = `${key}:${n++}`;
+      used.add(finalKey);
+      el.dataset.proofKey = finalKey;
+    });
+  }
+
+  function applyProofEdits() {
+    collectProofTargets();
+    let count = 0;
+    $$("[data-proof-key]").forEach((el) => {
+      const value = proofEdits[el.dataset.proofKey];
+      if (typeof value === "string") {
+        el.innerHTML = value;
+        count += 1;
+      }
+    });
+    if (proofStatus && count) proofStatus.textContent = `已载入 ${count} 处`;
+  }
+
+  function setProofMode(on) {
+    if (on && presentationMode) exitPresentation({ silent: true });
+    proofMode = Boolean(on);
+    document.body.classList.toggle("proof-mode", proofMode);
+    if (proofBar) proofBar.hidden = !proofMode;
+    if (proofBtn) {
+      proofBtn.classList.toggle("is-active", proofMode);
+      proofBtn.setAttribute("aria-pressed", proofMode ? "true" : "false");
+      proofBtn.textContent = proofMode ? "退出校正" : "校正";
+    }
+    if (proofMode) {
+      collectProofTargets();
+      $$("[data-proof-key]").forEach((el) => {
+        el.setAttribute("contenteditable", "true");
+        el.setAttribute("spellcheck", "true");
+        el.classList.add("proof-target");
+      });
+      if (proofStatus) proofStatus.textContent = Object.keys(proofEdits).length ? "修改自动保存" : "未修改";
+    } else {
+      $$("[data-proof-key]").forEach((el) => {
+        el.removeAttribute("contenteditable");
+        el.removeAttribute("spellcheck");
+        el.classList.remove("proof-target");
+      });
+      if (proofStatus) proofStatus.textContent = "已保存";
+    }
+  }
+
+  function downloadBlob(name, blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1200);
+  }
+
+  function safeFileStem() {
+    return (document.title || "英语试卷")
+      .replace(/[\\/:*?"<>|]+/g, "_")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 80) || "英语试卷";
+  }
+
+  function exportCorrectedHtml() {
+    const clone = document.documentElement.cloneNode(true);
+    clone.querySelectorAll("[contenteditable]").forEach((el) => {
+      el.removeAttribute("contenteditable");
+      el.removeAttribute("spellcheck");
+    });
+    clone.querySelectorAll(".proof-target").forEach((el) => el.classList.remove("proof-target"));
+    clone.querySelectorAll(".proof-mode").forEach((el) => el.classList.remove("proof-mode"));
+    clone.querySelectorAll(".is-target").forEach((el) => el.classList.remove("is-target"));
+    const btn = clone.querySelector("#proofBtn");
+    if (btn) {
+      btn.classList.remove("is-active");
+      btn.setAttribute("aria-pressed", "false");
+      btn.textContent = "校正";
+    }
+    const bar = clone.querySelector("#proofBar");
+    if (bar) bar.hidden = true;
+    const drawer = clone.querySelector("#drawer");
+    if (drawer) {
+      drawer.classList.remove("is-open");
+      drawer.setAttribute("aria-hidden", "true");
+    }
+    const backdrop = clone.querySelector("#drawerBackdrop");
+    if (backdrop) backdrop.hidden = true;
+    const toastEl = clone.querySelector("#toast");
+    if (toastEl) toastEl.textContent = "";
+    clone.querySelectorAll(".is-presenting, .is-present-blackout").forEach((el) => {
+      el.classList.remove("is-presenting");
+      el.classList.remove("is-present-blackout");
+    });
+    const blackout = clone.querySelector("#presentBlackout");
+    if (blackout) { blackout.hidden = true; blackout.setAttribute("aria-hidden", "true"); }
+    const presentButton = clone.querySelector("#presentBtn");
+    if (presentButton) {
+      presentButton.classList.remove("is-active");
+      presentButton.setAttribute("aria-pressed", "false");
+      presentButton.textContent = "演示";
+    }
+    clone.querySelectorAll(".tab-panel[tabindex='-1']").forEach((el) => el.removeAttribute("tabindex"));
+    const html = "<!doctype html>\n" + clone.outerHTML;
+    downloadBlob(`${safeFileStem()}-校正.html`, new Blob([html], { type: "text/html;charset=utf-8" }));
+    if (proofStatus) proofStatus.textContent = "已下载校正 HTML";
+  }
+
+  function exportCorrectedJson() {
+    const payload = {
+      version: 1,
+      generatedAt: new Date().toISOString(),
+      edits: proofEdits,
+    };
+    downloadBlob(
+      `${safeFileStem()}-校正.json`,
+      new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" })
+    );
+    if (proofStatus) proofStatus.textContent = "已导出校正 JSON";
+  }
+
+  if (proofBtn) {
+    proofBtn.addEventListener("click", () => setProofMode(!proofMode));
+  }
+  if (proofBar) {
+    const done = $("#proofDone");
+    const exportHtml = $("#proofExportHtml");
+    const exportJson = $("#proofExportJson");
+    const clear = $("#proofClear");
+    if (done) done.addEventListener("click", () => setProofMode(false));
+    if (exportHtml) exportHtml.addEventListener("click", exportCorrectedHtml);
+    if (exportJson) exportJson.addEventListener("click", exportCorrectedJson);
+    if (clear) {
+      clear.addEventListener("click", () => {
+        if (!window.confirm("清除本机保存的所有文本校正？")) return;
+        try { localStorage.removeItem(PROOF_KEY); } catch (_) { /* ignore */ }
+        location.reload();
+      });
+    }
+  }
+
+  document.addEventListener("input", (event) => {
+    if (!proofMode) return;
+    const el = event.target.closest('[contenteditable="true"][data-proof-key]');
+    if (!el) return;
+    proofEdits[el.dataset.proofKey] = el.innerHTML;
+    try {
+      localStorage.setItem(PROOF_KEY, JSON.stringify(proofEdits));
+      if (proofStatus) proofStatus.textContent = "已保存";
+    } catch (_) {
+      if (proofStatus) proofStatus.textContent = "本机存储不可用";
+    }
+  });
+
+  document.addEventListener("paste", (event) => {
+    if (!proofMode) return;
+    const el = event.target.closest('[contenteditable="true"]');
+    if (!el) return;
+    event.preventDefault();
+    const text = (event.clipboardData || window.clipboardData).getData("text/plain");
+    document.execCommand("insertText", false, text);
+  }, true);
+
+  document.addEventListener("click", (event) => {
+    if (!proofMode) return;
+    if (event.target.closest("#proofBar, #proofBtn")) return;
+    if (event.target.closest('[contenteditable="true"]')) event.stopPropagation();
+  }, true);
+
+  // Presentation / clicker mode
+  const PRESENT_STAGES = ["structure", "analysis", "vocab"];
+  const PRESENT_STAGE_LABELS = { structure: "结构", analysis: "解析", vocab: "单词" };
+  let presentationMode = false;
+  let presentationStage = 0;
+  let presentationStructureIndex = 0;
+  let presentationQuestionIndex = 0;
+  let presentationBlackout = false;
+  let presentationSyncing = false;
+  let presentationSnapshot = null;
+  let presentationWorkspaceDirty = false;
+  let presentationBoundaryAt = 0;
+
+  const presentBtn = $("#presentBtn");
+  const presentLive = $("#presentLive");
+  const presentBlackoutEl = $("#presentBlackout");
+  const presentWake = $("#presentWake");
+
+  function initTabA11y() {
+    for (const sec of sections) {
+      const secEl = document.querySelector(`.exam-section[data-section="${sec.id}"]`);
+      if (!secEl) continue;
+      $$(".tab-btn", secEl).forEach((btn) => {
+        const name = btn.dataset.tab;
+        if (!name) return;
+        const panel = secEl.querySelector(`.tab-panel[data-tab-panel="${name}"]`);
+        if (!panel) return;
+        if (!btn.id) btn.id = `tab-${sec.id}-${name}`;
+        if (!panel.id) panel.id = `panel-${sec.id}-${name}`;
+        btn.setAttribute("aria-controls", panel.id);
+        btn.setAttribute("role", "tab");
+        panel.setAttribute("role", "tabpanel");
+        panel.setAttribute("aria-labelledby", btn.id);
+        panel.tabIndex = -1;
+      });
+    }
+  }
+
+  function activeTabPanel() {
+    const secEl = currentSectionEl();
+    return secEl ? secEl.querySelector(`.tab-panel[data-tab-panel="${state.tab}"]`) : null;
+  }
+
+  function currentQuestions() {
+    const sec = sectionMap.get(state.section);
+    return sec && Array.isArray(sec.questions) ? sec.questions : [];
+  }
+
+  function currentStructureNodes() {
+    const secEl = currentSectionEl();
+    if (!secEl) return [];
+    const nodes = $$(".structure-flow-node[data-blocks]", secEl);
+    return nodes.length ? nodes : $$(".structure-flow [data-blocks]", secEl);
+  }
+
+  function ensurePresentationAnalysisVisible() {
+    const secEl = currentSectionEl();
+    if (!secEl) return;
+    const workspace = secEl.querySelector(".workspace");
+    if (workspace && workspace.classList.contains("is-collapsed-analysis")) {
+      collapsedSide = null;
+      if (splitRatio >= 80 || splitRatio <= 20) setSplitValue(56);
+      applyWorkspaceState();
+    }
+  }
+
+  function focusPanel() {
+    const panel = activeTabPanel();
+    if (!panel) return;
+    panel.tabIndex = -1;
+    panel.focus({ preventScroll: true });
+  }
+
+  function updatePresentationLive(extra) {
+    if (!presentLive) return;
+    const sec = sectionMap.get(state.section);
+    const secIndex = sections.findIndex((item) => item.id === state.section);
+    const stageLabel = PRESENT_STAGE_LABELS[PRESENT_STAGES[presentationStage]] || "结构";
+    let text = `${(sec && (sec.label || sec.title)) || state.section}，${stageLabel}阶段，第 ${secIndex + 1} 篇，共 ${sections.length} 篇`;
+    if (presentationStage === 1) text += `，第 ${presentationQuestionIndex + 1} 题`;
+    presentLive.textContent = extra ? `${text}，${extra}` : text;
+  }
+
+  function isSingleColumnLayout() {
+    return window.matchMedia("(max-width: 1150px)").matches;
+  }
+
+  function elementRegion(el) {
+    if (!el) return null;
+    return {
+      kind: "element",
+      el,
+      top: 0,
+      bottom: Math.max(0, el.scrollHeight - el.clientHeight),
+      current: el.scrollTop,
+      viewport: el.clientHeight,
+    };
+  }
+
+  function getPresentationRegion() {
+    const secEl = currentSectionEl();
+    if (!secEl) return null;
+    if (isSingleColumnLayout()) {
+      const panel = activeTabPanel();
+      if (!panel) return null;
+      const rect = panel.getBoundingClientRect();
+      const top = Math.max(0, window.scrollY + rect.top - 8);
+      const bottom = Math.max(top, window.scrollY + rect.bottom - window.innerHeight + 10);
+      return { kind: "document", top, bottom, current: window.scrollY, viewport: window.innerHeight };
+    }
+    if (state.tab === "vocab") {
+      const list = secEl.querySelector(".tab-vocab-list");
+      if (list && list.scrollHeight > list.clientHeight + 2) return elementRegion(list);
+    }
+    return elementRegion(secEl.querySelector(".analysis-body"));
+  }
+
+  function scrollRegionTo(region, top) {
+    if (!region) return;
+    const target = Math.max(region.top, Math.min(region.bottom, top));
+    const behavior = reduceMotion() ? "auto" : "smooth";
+    if (region.kind === "document") window.scrollTo({ top: target, behavior });
+    else region.el.scrollTo({ top: target, behavior });
+  }
+
+  function scrollRegionBy(region, direction) {
+    if (!region) return false;
+    const amount = Math.max(120, Math.round(region.viewport * 0.85));
+    const current = region.kind === "document" ? window.scrollY : region.el.scrollTop;
+    if (direction > 0 && current >= region.bottom - 2) return false;
+    if (direction < 0 && current <= region.top + 2) return false;
+    scrollRegionTo(region, current + direction * amount);
+    return true;
+  }
+
+  function scrollStageEdge(toEnd) {
+    const region = getPresentationRegion();
+    if (region) scrollRegionTo(region, toEnd ? region.bottom : region.top);
+  }
+
+  function clearPresentTargets() {
+    const secEl = currentSectionEl();
+    if (secEl) $$(".passage-body [data-block].is-present-target", secEl).forEach((el) => el.classList.remove("is-present-target"));
+  }
+
+  function markPresentTargets(ids) {
+    const secEl = currentSectionEl();
+    if (!secEl) return;
+    String(ids || "").split(",").map((s) => s.trim()).filter(Boolean).forEach((id) => {
+      const el = secEl.querySelector(`.passage-body [data-block="${id}"]`);
+      if (el) el.classList.add("is-present-target");
+    });
+  }
+
+  function showStructureNode(index) {
+    const nodes = currentStructureNodes();
+    if (!nodes.length) {
+      ensurePresentationAnalysisVisible();
+      presentationSyncing = true;
+      setTab("structure", { scroll: false });
+      presentationSyncing = false;
+      updatePresentationLive();
+      focusPanel();
+      return false;
+    }
+    const next = Math.max(0, Math.min(nodes.length - 1, Number(index) || 0));
+    presentationStructureIndex = next;
+    ensurePresentationAnalysisVisible();
+    presentationSyncing = true;
+    setTab("structure", { scroll: false });
+    presentationSyncing = false;
+    const secEl = currentSectionEl();
+    if (secEl) $$(".structure-flow-node.is-present-current", secEl).forEach((el) => el.classList.remove("is-present-current"));
+    const node = nodes[next];
+    node.classList.add("is-present-current");
+    clearPresentTargets();
+    if (node.dataset.blocks) {
+      jumpToBlocks(node.dataset.blocks);
+      markPresentTargets(node.dataset.blocks);
+    }
+    const behavior = reduceMotion() ? "auto" : "smooth";
+    requestAnimationFrame(() => {
+      node.scrollIntoView({ block: "center", behavior });
+      focusPanel();
+    });
+    updatePresentationLive();
+    return true;
+  }
+
+  function showAnalysisQuestion(index) {
+    clearPresentTargets();
+    const qs = currentQuestions();
+    if (!qs.length) {
+      ensurePresentationAnalysisVisible();
+      presentationSyncing = true;
+      setTab("analysis", { scroll: false });
+      presentationSyncing = false;
+      updatePresentationLive();
+      focusPanel();
+      return false;
+    }
+    const next = Math.max(0, Math.min(qs.length - 1, Number(index) || 0));
+    presentationQuestionIndex = next;
+    ensurePresentationAnalysisVisible();
+    presentationSyncing = true;
+    setTab("analysis", { scroll: false });
+    presentationSyncing = false;
+    const secEl = currentSectionEl();
+    if (secEl) $$(".q-card.is-present-current", secEl).forEach((el) => el.classList.remove("is-present-current"));
+    const q = qs[next];
+    const card = secEl ? secEl.querySelector(`.q-card[data-q="${q.id}"]`) : null;
+    if (card) {
+      card.classList.add("is-present-current");
+      const reveal = card.querySelector(".q-reveal");
+      if (reveal && !card.classList.contains("is-revealed")) reveal.click();
+      else if (!reveal) activate(q.id, q.answer, { scrollCard: false, scrollEvidence: false });
+      requestAnimationFrame(() => {
+        card.scrollIntoView({ block: "start", behavior: reduceMotion() ? "auto" : "smooth" });
+        focusPanel();
+      });
+    }
+    updatePresentationLive("答案已显示");
+    return true;
+  }
+
+  function showVocabStage(toEnd) {
+    clearPresentTargets();
+    ensurePresentationAnalysisVisible();
+    presentationSyncing = true;
+    setTab("vocab", { scroll: false });
+    presentationSyncing = false;
+    requestAnimationFrame(() => {
+      scrollStageEdge(Boolean(toEnd));
+      focusPanel();
+    });
+    updatePresentationLive();
+  }
+
+  function setPresentationStage(index, options = {}) {
+    const next = Math.max(0, Math.min(PRESENT_STAGES.length - 1, Number(index) || 0));
+    presentationStage = next;
+    if (PRESENT_STAGES[next] === "structure") {
+      showStructureNode(options.fromEnd ? currentStructureNodes().length - 1 : 0);
+    } else if (PRESENT_STAGES[next] === "analysis") {
+      showAnalysisQuestion(options.fromEnd ? currentQuestions().length - 1 : 0);
+    } else {
+      showVocabStage(Boolean(options.fromEnd));
+    }
+  }
+
+  function presentationBoundary(message) {
+    const now = Date.now();
+    if (now - presentationBoundaryAt < 700) return;
+    presentationBoundaryAt = now;
+    toast(message);
+  }
+
+  function presentationNext(repeat = false) {
+    if (presentationBlackout) { setPresentationBlackout(false); return true; }
+    if (drawer && drawer.classList.contains("is-open")) { scrollDrawerBy(1); return true; }
+    const stage = PRESENT_STAGES[presentationStage];
+    if (stage === "structure") {
+      if (repeat) return true;
+      const nodes = currentStructureNodes();
+      if (nodes.length && presentationStructureIndex < nodes.length - 1) {
+        showStructureNode(presentationStructureIndex + 1);
+      } else if (currentQuestions().length) {
+        setPresentationStage(1);
+      } else {
+        setPresentationStage(2);
+      }
+      return true;
+    }
+    if (stage === "analysis") {
+      if (repeat) return true;
+      const qs = currentQuestions();
+      if (qs.length && presentationQuestionIndex < qs.length - 1) showAnalysisQuestion(presentationQuestionIndex + 1);
+      else setPresentationStage(2);
+      return true;
+    }
+    const region = getPresentationRegion();
+    if (region && scrollRegionBy(region, 1)) return true;
+    if (repeat) return true;
+    const index = sections.findIndex((sec) => sec.id === state.section);
+    if (index >= 0 && index < sections.length - 1) {
+      showSection(sections[index + 1].id);
+      setPresentationStage(0);
+    } else {
+      presentationBoundary("已到全卷演示末尾");
+    }
+    return true;
+  }
+
+  function presentationPrev(repeat = false) {
+    if (presentationBlackout) { setPresentationBlackout(false); return true; }
+    if (drawer && drawer.classList.contains("is-open")) { scrollDrawerBy(-1); return true; }
+    const stage = PRESENT_STAGES[presentationStage];
+    if (stage === "structure") {
+      if (presentationStructureIndex > 0) {
+        showStructureNode(presentationStructureIndex - 1);
+        return true;
+      }
+      const index = sections.findIndex((sec) => sec.id === state.section);
+      if (index > 0) {
+        showSection(sections[index - 1].id);
+        setPresentationStage(2, { fromEnd: true });
+        return true;
+      }
+      presentationBoundary("已是全卷演示起点");
+      return true;
+    }
+    if (stage === "analysis") {
+      if (presentationQuestionIndex > 0) {
+        showAnalysisQuestion(presentationQuestionIndex - 1);
+      } else {
+        setPresentationStage(0, { fromEnd: true });
+      }
+      return true;
+    }
+    const region = getPresentationRegion();
+    if (region && scrollRegionBy(region, -1)) return true;
+    if (repeat) return true;
+    const qs = currentQuestions();
+    if (qs.length) setPresentationStage(1, { fromEnd: true });
+    else setPresentationStage(0, { fromEnd: true });
+    return true;
+  }
+
+  function scrollDrawerBy(direction) {
+    if (!drawerBody) return;
+    const max = Math.max(0, drawerBody.scrollHeight - drawerBody.clientHeight);
+    if (max <= 0) return;
+    const amount = Math.max(120, Math.round(drawerBody.clientHeight * 0.85));
+    drawerBody.scrollTo({
+      top: Math.max(0, Math.min(max, drawerBody.scrollTop + direction * amount)),
+      behavior: reduceMotion() ? "auto" : "smooth",
+    });
+  }
+
+  function setPresentationBlackout(on) {
+    presentationBlackout = Boolean(on);
+    if (presentBlackoutEl) {
+      presentBlackoutEl.hidden = !presentationBlackout;
+      presentBlackoutEl.setAttribute("aria-hidden", presentationBlackout ? "false" : "true");
+    }
+    if (presentationBlackout) {
+      if (presentWake) presentWake.focus({ preventScroll: true });
+      if (presentLive) presentLive.textContent = "已黑屏，演示位置保留";
+    } else {
+      focusPanel();
+      updatePresentationLive();
+    }
+  }
+
+  function enterPresentation() {
+    if (presentationMode) return;
+    if (proofMode) { toast("请先完成文本校正"); return; }
+    closeDrawer();
+    presentationSnapshot = { splitRatio, collapsedSide };
+    presentationWorkspaceDirty = false;
+    presentationMode = true;
+    document.body.classList.add("is-presenting");
+    if (presentBtn) {
+      presentBtn.classList.add("is-active");
+      presentBtn.setAttribute("aria-pressed", "true");
+      presentBtn.textContent = "退出演示";
+    }
+    setPresentationStage(0);
+    updatePresentationLive("已进入演示");
+  }
+
+  function exitPresentation(options = {}) {
+    if (!presentationMode) return;
+    setPresentationBlackout(false);
+    presentationMode = false;
+    presentationBlackout = false;
+    document.body.classList.remove("is-presenting", "is-present-blackout");
+    if (presentBtn) {
+      presentBtn.classList.remove("is-active");
+      presentBtn.setAttribute("aria-pressed", "false");
+      presentBtn.textContent = "演示";
+    }
+    if (presentationSnapshot && !presentationWorkspaceDirty) {
+      splitRatio = presentationSnapshot.splitRatio;
+      collapsedSide = presentationSnapshot.collapsedSide;
+      applyWorkspaceState();
+    }
+    presentationSnapshot = null;
+    clearPresentTargets();
+    if (!options.silent && presentBtn) presentBtn.focus({ preventScroll: true });
+    if (presentLive) presentLive.textContent = "已退出演示";
+  }
+
+  function syncPresentationTab(tab) {
+    if (!presentationMode || presentationSyncing) return;
+    if (tab === "exam") { exitPresentation({ silent: true }); return; }
+    const index = PRESENT_STAGES.indexOf(tab);
+    if (index >= 0) setPresentationStage(index);
+  }
+
+  function handlePresentationEscape(event) {
+    if (presentationBlackout) {
+      setPresentationBlackout(false);
+      event.preventDefault();
+      return true;
+    }
+    if (drawer && drawer.classList.contains("is-open")) return false;
+    if (presentationMode) {
+      exitPresentation();
+      event.preventDefault();
+      return true;
+    }
+    return false;
+  }
+
+  function isEditableTarget(target) {
+    return Boolean(target && target.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""], [role="textbox"]'));
+  }
+
+  function isInteractiveTarget(target) {
+    return Boolean(target && target.closest('button, a, input, select, textarea, [contenteditable="true"], [role="button"]'));
+  }
+
+  const PRESENT_NEXT_KEYS = new Set([
+    "PageDown", "ArrowRight", "ArrowDown", "Enter", "N", "n", "End", "F5",
+    ".", ">", "]", "MediaTrackNext", "NextTrack", "BrowserForward",
+  ]);
+  const PRESENT_PREV_KEYS = new Set([
+    "PageUp", "ArrowLeft", "ArrowUp", "P", "p", "Home", ",", "<", "[",
+    "Backspace", "MediaTrackPrevious", "PreviousTrack", "BrowserBack",
+  ]);
+
+  function presentationDirection(key, shift) {
+    if (shift && (key === " " || key === "Enter")) return -1;
+    if (PRESENT_NEXT_KEYS.has(key)) return 1;
+    if (PRESENT_PREV_KEYS.has(key)) return -1;
+    if (/^F\d{1,2}$/.test(key)) return 1;
+    // Clicker brands use many single-character keys. Unknown printable keys
+    // are treated as Next; B remains the blackout key.
+    if (key.length === 1 && key !== "b" && key !== "B") return 1;
+    return 0;
+  }
+
+  function handlePresentationKey(event) {
+    if (!presentationMode || proofMode || event.defaultPrevented) return;
+    if (event.ctrlKey || event.altKey || event.metaKey) return;
+    const target = event.target;
+    if (isEditableTarget(target)) return;
+    const key = event.key;
+    const direction = presentationDirection(key, event.shiftKey);
+
+    if (drawer && drawer.classList.contains("is-open")) {
+      if (direction !== 0) {
+        event.preventDefault();
+        scrollDrawerBy(direction);
+      }
+      return;
+    }
+
+    if (key === "b" || key === "B") {
+      event.preventDefault();
+      setPresentationBlackout(!presentationBlackout);
+      return;
+    }
+
+    if (presentationBlackout) {
+      if (direction !== 0) {
+        event.preventDefault();
+        setPresentationBlackout(false);
+      }
+      return;
+    }
+
+    if (direction === 0) return;
+    if ((key === " " || key === "Enter") && isInteractiveTarget(target)) return;
+    event.preventDefault();
+    if (direction > 0) presentationNext(event.repeat);
+    else presentationPrev(event.repeat);
+  }
+
+  if (presentBtn) {
+    presentBtn.addEventListener("click", () => {
+      if (presentationMode) exitPresentation();
+      else enterPresentation();
+    });
+  }
+  if (presentWake) presentWake.addEventListener("click", () => setPresentationBlackout(false));
+  document.addEventListener("keydown", handlePresentationKey);
+  document.addEventListener("pointerdown", (event) => {
+    if (presentationMode && event.target.closest(".splitter")) presentationWorkspaceDirty = true;
+  }, true);
+  document.addEventListener("keydown", (event) => {
+    if (presentationMode && event.target.closest(".splitter") && ["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
+      presentationWorkspaceDirty = true;
+    }
+  }, true);
 
   // Fullscreen
   const fullscreenBtn = $("#fullscreenBtn");
@@ -950,6 +1734,12 @@
   initSplitters();
   applyWorkspaceState();
 
+  // Give tabs and panels stable ARIA relationships before presentation mode.
+  initTabA11y();
+
+  // Apply locally saved proofreading edits before revealing sections.
+  applyProofEdits();
+
   // Initial section
   const hash = (location.hash || "").replace(/^#\/?/, "");
   const initial = sectionMap.has(hash) ? hash : sections[0].id;
@@ -961,7 +1751,10 @@
 
   window.addEventListener("hashchange", () => {
     const id = (location.hash || "").replace(/^#\/?/, "");
-    if (sectionMap.has(id) && id !== state.section) showSection(id);
+    if (sectionMap.has(id) && id !== state.section) {
+      showSection(id);
+      if (presentationMode) setPresentationStage(0);
+    }
   });
 
   window.addEventListener("resize", hideHoverCard);

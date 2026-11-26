@@ -26,10 +26,11 @@ MrLiHua 采用**纯静态、单文件、离线**架构：
 | `https://` / `http://` 外部资源 | 未使用 | 无 CDN、远程字体、图片 |
 | `<script src>` / `<link rel="stylesheet">` | 未使用 | CSS/JS 内联 |
 | Cookie | 未使用 | 无 Cookie |
-| `localStorage` | 仅字号 | key: `exam-font-size`，只保存 `normal/large/xlarge` |
-| `sessionStorage` / IndexedDB | 未使用 | 不存储试卷 |
+| `localStorage` | 字号 + 文本校正 | `exam-font-size` 只保存字号；`exam-proof-edits-v1` 保存本机文本修改 |
+| `sessionStorage` / IndexedDB | 未使用 | 不存储完整试卷；校正文本只在本机 localStorage |
 | Service Worker | 未使用 | 无后台缓存 |
 | Camera / Microphone / Geolocation | 未使用 | 不申请设备权限 |
+| WebHID / 串口 / 翻页笔驱动 | 未使用 | 演示模式只处理普通键盘事件 |
 | Clipboard | 未使用 | 不读取剪贴板 |
 | `file://` | 支持 | 双击 HTML 即可运行 |
 | Fullscreen API | 使用 | 需用户点击“全屏”手势 |
@@ -62,7 +63,9 @@ MrLiHua 采用**纯静态、单文件、离线**架构：
    HTML 由本地 JSON 构建；虽然输出对文本做了 HTML 转义，仍不建议把来源不明的 JSON 直接构建后分发给他人。
 
 2. **浏览器本地存储**  
-   `localStorage["exam-font-size"]` 只保存字号偏好；清除站点数据即可删除。
+   - `localStorage["exam-font-size"]` 只保存字号偏好；
+   - `localStorage["exam-proof-edits-v1"]` 只保存本机文本校正；不上传、不进入公开仓库；
+   - 校正模式可点击“清除”删除本机修改，或清除站点数据。
 
 3. **版权与隐私**  
    工具本身不上传数据，但使用者把生成 HTML 发布到网上时，仍可能暴露试卷内容。公开前请移除学校名、学生信息和未授权材料。

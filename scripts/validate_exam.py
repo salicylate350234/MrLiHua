@@ -142,6 +142,8 @@ def validate(data: dict) -> list[str]:
                 add(errors, f"{sid}: gap mismatch; questions={sorted(expected)} tokens={sorted(actual)}")
 
         for v in section.get("vocab", []):
+            if v.get("legacy"):
+                continue
             bid = v.get("block")
             if bid not in blocks:
                 add(errors, f"{sid}/vocab {v.get('id')}: unknown block {bid!r}")
